@@ -479,7 +479,13 @@ The data are collected daily, which leads to a lot of data! This is probably mor
 In the chunk below, aggregate the data to be total cases in 2020, by country. Your solution should only have columns `country`, `continent` and `total_cases`. (*Hint*: The `year()` function will extract the year from a date column.)
 
 ```{r covid_2020, error=TRUE}
-# YOUR CODE HERE
+covid_2020 <- covid_cases|>
+  filter(year(date) == 2020 & !is.na(continent))|>
+  group_by(location, continent) |>
+  summarise(total_cases = sum(total_cases, na.rm = TRUE))|>
+  rename( country = location)|> 
+  select(country, continent, total_cases)
+  
 
 covid_2020
 ```
