@@ -497,7 +497,7 @@ covid_2020
 Before we move on, we'll save `covid_2020.parquet` for use in Part 2.
 
 ```{r covid_2020_parquet, error=TRUE}
-# YOUR CODE HERE
+write_parquet(covid_2020, "covid_2020.parquet")
 ```
 
 ```{r}
