@@ -21,13 +21,13 @@ library(openxlsx)
 
 List all group members here:
 
--   Noya Barak
+-   Noya Barak (169097527)
 
 -   Sara Haifa
 
 -   Satinder Kaur (169109308)
 
--   Spencer Mozeg
+-   Spencer Mozeg (169099531)
 
 -   Khushi Satra (203383100)
 
@@ -600,6 +600,7 @@ aware_fixed_country <- climate_awareness |>
     mutate(
         # Replace *all* *literal* periods with a space in the country column
         # YOUR CODE HERE
+country= str_replace_all(country, "\\.", " ")
     )
 
 aware_fixed_country |> pull(country) |> unique()
@@ -632,6 +633,19 @@ aware_fixed_country_match <- aware_fixed_country |>
     mutate(
         # Change country using a case_when statement
         # YOUR CODE HERE
+country = case_when(
+        country == "Bolivia (Plurinational State of)" ~ "Bolivia",
+        country == "Congo (Democratic Republic of the)" ~ "Congo, Dem. Rep.",
+        country == "Egypt" ~ "Egypt, Arab Rep.",
+        country == "Hong Kong" ~ "Hong Kong SAR, China",
+        country == "Lao People's Democratic Republic" ~ "Lao PDR",
+        country == "Slovakia" ~ "Slovak Republic",
+        country == "North MAcedonia" ~ "North Macedonia",
+        country == "South Korea" ~ "Korea, Rep.",
+        country == "Turkey" ~ "Turkiye",
+        country == "Vietnam" ~ "Viet Nam",
+        country == "Yemen" ~ "Yemen, Rep.",
+        TRUE~country
     )
 
 aware_countries <- aware_fixed_country_match |> pull(country)
@@ -649,7 +663,10 @@ Now we can join! Use a [join](https://dplyr.tidyverse.org/reference/mutate-joins
 
 ```{r aware_pop, error=TRUE}
 # YOUR CODE HERE
-
+aware_pop <- 
+  inner_join(aware_fixed_country, pop_data, by = "country" )|>
+  rename( total_population = SP.POP.TOTL)|>
+  select(country, total_population, aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse)
 aware_pop
 ```
 
@@ -669,6 +686,8 @@ setdiff(aware_countries, covid_countries)
 
 ```{r covid_2020_match_country, error=TRUE}
 # YOUR CODE HERE
+covid_2020_match_country <- covid_2020|>
+  inner_join(aware_pop, by = "country")
 
 covid_2020_match_country
 ```
@@ -683,7 +702,9 @@ Join `aware_pop` and `covid_2020_match_country`, again only keep countries that 
 
 ```{r aware_covid, error=TRUE}
 # YOUR CODE HERE
-
+aware_covid <- aware_pop|>
+  inner_join(covid_2020_match_country, by = c("country", "total_population" ))|>
+  mutate(cases_per_capita = total_cases/total_population )
 aware_covid
 ```
 
