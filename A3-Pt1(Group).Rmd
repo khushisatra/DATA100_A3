@@ -1,6 +1,6 @@
 ---
 title: "Exploring Disparate Data: Part 1"
-author: "3"
+author: "Group 3"
 date: "Due November 12th"
 ---
 
@@ -257,7 +257,7 @@ To do this, you must choose whether to use `ObservYear` or `NameYear`.
 cyclones_data_update_2 <- cyclones_data_update_1 |>
     mutate(
         # YOUR CODE HERE
-        date <- make_datetime(year = ObservYear, month = Month, day = Day, hour = Hour, min = Minute)
+        date = make_datetime(year = ObservYear, month = Month, day = Day, hour = Hour, min = Minute)
             )
 
 print(cyclones_data_update_2)
@@ -432,7 +432,8 @@ ice_extent_yearly <- ice_extent_daily |>
   group_by(year, region) |>
   summarise(
   min = min(ice_extent),
-  max = max(ice_extent)
+  max = max(ice_extent),
+  .groups = "drop"
   ) |> 
   pivot_longer(
     cols = c(min, max), 
@@ -465,7 +466,7 @@ ggplot(ice_extent_yearly) +
 Finally, let's save the data to `ice_extent_yeary.parquet`.
 
 ```{r sea_ice_parquet, error=TRUE}
-write_parquet(ice_extent_yearly, "ice_extent_yeary.parquet")
+write_parquet(ice_extent_yearly, "ice_extent_yearly.parquet")
 ```
 
 ```{r}
@@ -548,7 +549,8 @@ In the chunk below, aggregate the data to be total cases in 2020, by country. Yo
 covid_2020 <- covid_cases|>
   filter(year(date) == 2020 & !is.na(continent))|>
   group_by(location, continent) |>
-  summarise(total_cases = sum(total_cases, na.rm = TRUE))|>
+  summarise(total_cases = sum(total_cases, na.rm = TRUE),
+            .groups = "drop")|>
   rename( country = location)|> 
   select(country, continent, total_cases)
   
@@ -803,4 +805,13 @@ write_parquet(happiness, "happiness.parquet")
 
 ------------------------------------------------------------------------
 
-# Joining The Data
+# Joining The Data (Ideas)
+
+```{r}
+combined_data <- bind_rows(ice_extent_yearly,climate_awareness, cyclones_data)
+
+combined_data
+```
+
+```{r}
+```
