@@ -23,15 +23,15 @@ List all group members here:
 
 -   Noya Barak (169097527)
 
--   Sara Haifa
+-   Sara Haifa (169087012)
 
 -   Satinder Kaur (169109308)
 
 -   Spencer Mozeg (169099531)
 
--   Khushi Satra (203383100)
+-   Khushi Satra, (203383100)
 
-This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
+    This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
 
 ## Overview
 
@@ -71,7 +71,7 @@ new_columns <- c("status", "latitude", "longitude", "max_wind",
 
 # Same steps as in A2, but you can put them all in the same pipeline!
 at_cyclone <- str_c(cyclone_data_address, at_cyclone_filename, sep = "") |>
-   read_csv(
+    read_csv(
         col_names = c(as.character(1:4)),
         progress = FALSE,
         show_col_types = FALSE
@@ -104,7 +104,7 @@ at_cyclone <- str_c(cyclone_data_address, at_cyclone_filename, sep = "") |>
     separate_wider_position(
         `1`,
         # Specify the widths
-        widths = c(ObservYear = 4, Month = 2, Day = 2)
+       widths = c(ObservYear = 4, Month = 2, Day = 2)
     ) |>
     separate_wider_position(
         `2`,
@@ -122,6 +122,8 @@ at_cyclone <- str_c(cyclone_data_address, at_cyclone_filename, sep = "") |>
         )
     ) |>
     mutate(across(max_wind:r_max_wind, as.numeric))
+
+
 print(at_cyclone)
 ```
 
@@ -131,7 +133,8 @@ print(at_cyclone)
 
 ```{r}
 np_cyclone <- str_c(cyclone_data_address, np_cyclone_filename, sep = "") |>
-read_csv(
+    # ALL of the steps all over again
+    read_csv(
         col_names = c(as.character(1:4)),
         progress = FALSE,
         show_col_types = FALSE
@@ -198,8 +201,9 @@ Name the data frame `cyclones_data_update_0`.
 
 ```{r error=TRUE}
 # YOUR CODE HERE
+  cyclones_data_update_0 <- bind_rows(at_cyclone, np_cyclone)
 
-cyclones_data_update_0 <- bind_rows(at_cyclone, np_cyclone)
+print(cyclones_data_update_0)
 ```
 
 ```{r}
@@ -216,7 +220,8 @@ There are many ways to solve this. My solution is one line and uses `parse_numbe
 
 ```{r convert_latlon, error=TRUE}
 convert_latlon <- function(latlon) {
-   if_else(
+    # YOUR CODE HERE
+      if_else(
       str_detect(latlon,"N|E"),
       parse_number(latlon),
       -parse_number(latlon) 
@@ -251,11 +256,9 @@ To do this, you must choose whether to use `ObservYear` or `NameYear`.
 ```{r cyclones_data_update_2, error=TRUE}
 cyclones_data_update_2 <- cyclones_data_update_1 |>
     mutate(
-         mutate(
-        date <-
-          make_datetime(year = ObservYear, month = Month, day = Day, hour = Hour, min = Minute)
-    )
-    )
+        # YOUR CODE HERE
+        date <- make_datetime(year = ObservYear, month = Month, day = Day, hour = Hour, min = Minute)
+            )
 
 print(cyclones_data_update_2)
 ```
@@ -277,14 +280,14 @@ cyclones_data <- cyclones_data_update_2 |>
     mutate(
         category = ordered(
             case_when(
-                 case_when(
-             max_wind < 34 ~ "TD",                         
+                # YOUR CODE HERE
+            max_wind < 34 ~ "TD",                         
             max_wind >= 34 & max_wind <= 63 ~ "TS",       
             max_wind >= 64 & max_wind <= 82 ~ "1",        
             max_wind >= 83 & max_wind <= 95 ~ "2",        
             max_wind >= 96 & max_wind <= 112 ~ "3",       
             max_wind >= 113 & max_wind <= 136 ~ "4",      
-            max_wind >= 137 ~ "5"     
+            max_wind >= 137 ~ "5"  
             ),
             levels = cat_levels
         )
@@ -425,6 +428,7 @@ In the chunk below, find the maximum and minimum sea ice extent for each year (b
 
 ```{r}
 ice_extent_yearly <- ice_extent_daily |>
+  #YOUR CODE HERE
   group_by(year, region) |>
   summarise(
   min = min(ice_extent),
@@ -462,7 +466,6 @@ Finally, let's save the data to `ice_extent_yeary.parquet`.
 
 ```{r sea_ice_parquet, error=TRUE}
 write_parquet(ice_extent_yearly, "ice_extent_yeary.parquet")
-
 ```
 
 ```{r}
@@ -541,6 +544,7 @@ The data are collected daily, which leads to a lot of data! This is probably mor
 In the chunk below, aggregate the data to be total cases in 2020, by country. Your solution should only have columns `country`, `continent` and `total_cases`. (*Hint*: The `year()` function will extract the year from a date column.)
 
 ```{r covid_2020, error=TRUE}
+# YOUR CODE HERE
 covid_2020 <- covid_cases|>
   filter(year(date) == 2020 & !is.na(continent))|>
   group_by(location, continent) |>
@@ -559,7 +563,9 @@ covid_2020
 Before we move on, we'll save `covid_2020.parquet` for use in Part 2.
 
 ```{r covid_2020_parquet, error=TRUE}
+#YOUR CODE HERE
 write_parquet(covid_2020, "covid_2020.parquet")
+
 ```
 
 ```{r}
@@ -600,7 +606,7 @@ aware_fixed_country <- climate_awareness |>
     mutate(
         # Replace *all* *literal* periods with a space in the country column
         # YOUR CODE HERE
-country= str_replace_all(country, "\\.", " ")
+        country = str_replace_all(aware_countries,"\\.", " ")
     )
 
 aware_fixed_country |> pull(country) |> unique()
@@ -630,10 +636,10 @@ Use a `case_when()` statement to change the countries in `aware_fixed_country` w
 
 ```{r aware_fixed_country_match}
 aware_fixed_country_match <- aware_fixed_country |>
-    mutate(
-        # Change country using a case_when statement
-        # YOUR CODE HERE
-country = case_when(
+# Change country using a case_when statement
+  mutate(
+# YOUR CODE HERE
+ country = case_when(
         country == "Bolivia (Plurinational State of)" ~ "Bolivia",
         country == "Congo (Democratic Republic of the)" ~ "Congo, Dem. Rep.",
         country == "Egypt" ~ "Egypt, Arab Rep.",
@@ -646,6 +652,7 @@ country = case_when(
         country == "Vietnam" ~ "Viet Nam",
         country == "Yemen" ~ "Yemen, Rep.",
         TRUE~country
+        )
     )
 
 aware_countries <- aware_fixed_country_match |> pull(country)
@@ -663,10 +670,11 @@ Now we can join! Use a [join](https://dplyr.tidyverse.org/reference/mutate-joins
 
 ```{r aware_pop, error=TRUE}
 # YOUR CODE HERE
-aware_pop <- 
+  aware_pop <- 
   inner_join(aware_fixed_country, pop_data, by = "country" )|>
   rename( total_population = SP.POP.TOTL)|>
   select(country, total_population, aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse)
+   
 aware_pop
 ```
 
@@ -687,7 +695,7 @@ setdiff(aware_countries, covid_countries)
 ```{r covid_2020_match_country, error=TRUE}
 # YOUR CODE HERE
 covid_2020_match_country <- covid_2020|>
-  inner_join(aware_pop, by = "country")
+inner_join(aware_pop, by = "country")
 
 covid_2020_match_country
 ```
@@ -705,6 +713,7 @@ Join `aware_pop` and `covid_2020_match_country`, again only keep countries that 
 aware_covid <- aware_pop|>
   inner_join(covid_2020_match_country, by = c("country", "total_population" ))|>
   mutate(cases_per_capita = total_cases/total_population )
+
 aware_covid
 ```
 
