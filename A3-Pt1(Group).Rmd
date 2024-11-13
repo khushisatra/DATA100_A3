@@ -549,7 +549,7 @@ In the chunk below, aggregate the data to be total cases in 2020, by country. Yo
 covid_2020 <- covid_cases|>
   filter(year(date) == 2020 & !is.na(continent))|>
   group_by(location, continent) |>
-  summarise(total_cases = sum(total_cases, na.rm = TRUE),
+  summarise(total_cases = max(total_cases, na.rm = TRUE),
             .groups = "drop")|>
   rename( country = location)|> 
   select(country, continent, total_cases)
@@ -673,9 +673,9 @@ Now we can join! Use a [join](https://dplyr.tidyverse.org/reference/mutate-joins
 ```{r aware_pop, error=TRUE}
 # YOUR CODE HERE
   aware_pop <- 
-  inner_join(aware_fixed_country, pop_data, by = "country" )|>
-  rename( total_population = SP.POP.TOTL)|>
-  select(country, total_population, aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse)
+  inner_join(aware_fixed_country_match, pop_data, by = "country" )|>
+  rename( total_population = SP.POP.TOTL)
+  
    
 aware_pop
 ```
@@ -697,7 +697,7 @@ setdiff(aware_countries, covid_countries)
 ```{r covid_2020_match_country, error=TRUE}
 # YOUR CODE HERE
 covid_2020_match_country <- covid_2020|>
-inner_join(aware_pop, by = "country")
+right_join(aware_pop, by = "country")
 
 covid_2020_match_country
 ```
@@ -713,7 +713,7 @@ Join `aware_pop` and `covid_2020_match_country`, again only keep countries that 
 ```{r aware_covid, error=TRUE}
 # YOUR CODE HERE
 aware_covid <- aware_pop|>
-  inner_join(covid_2020_match_country, by = c("country", "total_population", "aware_no", "aware_alittle", "aware_moderate", "aware_alot","aware_refuse" ))|>
+  inner_join(covid_2020_match_country, by = c("country", "total_population", "aware_no", "aware_alittle", "aware_moderate", "aware_alot","aware_refuse","aware_base", "iso2c", "iso3c", "date","unit", "obs_status", "footnote", "last_updated" ))|>
   mutate(cases_per_capita = total_cases/total_population )
 
 aware_covid
