@@ -115,12 +115,12 @@ The data come from [a climate awareness survey](https://data.humdata.org/dataset
 
 After loading in the data from the Excel sheet, the following steps are done in order to clean the data:
 
-1.  Pivoting
-2.  Renaming the survey options to shorter and more clear description.
-3.  Mutating Values
-4. Renaming Columns
-5. Pivoting wider
-6. Writing to Parquet
+1.  Pivoting- Pivoting was used to reshape the data from a wide format (with each survey response category in separate columns) to a long format that is easier to analyze.
+2.  Renaming the survey options to shorter and more clear description.- Renaming the survey options to shorter codes simplifies the data for future processing and analysis. Using "aware_no" instead of lengthy descriptions such as "I have never heard of it" makes the code more concise and readable. 
+3.  Mutating Values- Specific survey response options were converted into shorter, standardized codes (e.g., "I know a lot about it" to "aware_alot") for easier analysis.
+4. Renaming Columns- The climate_awareness column was renamed to ensure clarity and consistency in column naming.
+5. Pivoting wider- Restructured the data so that survey response categories are column names (e.g., aware_no, aware_alittle) and their respective scores are values, making it easier to analyze each country's awareness level.
+6. Writing to Parquet-  I saved the cleaned data as a.parquet file to optimize storage and allow for faster data loading in future analyses.
 
 ## \<\<Sea Ice Data\>\>
 
