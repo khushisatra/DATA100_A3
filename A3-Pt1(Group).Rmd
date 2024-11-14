@@ -862,3 +862,24 @@ ggplot(merged_data, aes(x = year)) +
   ) +
   theme_minimal()
 ```
+```{r}
+#2023
+happiness_cad <- happiness |>
+  filter(
+    !is.na(perceptions_of_corruption),
+    country == 'Canada'
+  ) |>
+  select (country, perceptions_of_corruption)
+
+happiness_cad
+
+#2020 in COVID, 2022 in awareness 
+aware_covid_cad <- aware_covid |>
+  filter(
+    country == 'Canada'
+  ) |>
+  select (country,aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse, covid_per_capita)
+aware_covid_cad
+
+joined_data_cad <- 
+```
