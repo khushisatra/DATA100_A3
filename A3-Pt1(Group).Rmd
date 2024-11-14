@@ -698,7 +698,21 @@ setdiff(aware_countries, covid_countries)
 ```{r covid_2020_match_country, error=TRUE}
 # YOUR CODE HERE
 covid_2020_match_country <- covid_2020|>
-right_join(aware_pop, by = "country")
+mutate(
+    country = case_when(
+      country == "Congo"~ "Congo, Dem. Rep." ,
+      country == "Egypt" ~"Egypt, Arab Rep."  ,
+      country == "Hong Kong" ~"Hong Kong SAR, China" ,
+      country == "Laos" ~"Lao PDR"  ,
+      country == "Slovakia" ~"Slovak Republic" ,
+      country == "South Korea" ~"Korea, Rep." ,
+      country == "Turkey" ~"Turkiye"  ,
+      country == "Vietnam" ~"Viet Nam" ,
+      country == "Yemen" ~"Yemen, Rep." ,
+      TRUE~ country
+    )
+  )|>
+left_join(aware_pop, by = "country")
 
 covid_2020_match_country
 ```
