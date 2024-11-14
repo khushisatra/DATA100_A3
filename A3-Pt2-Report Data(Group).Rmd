@@ -45,6 +45,7 @@ You will only submit the PDF version of this document. To knit to PDF, you'll ne
 # Abstract
 
 -   If sea ice decline, hurricanes are more common, and social stability gets negative impact.
+-   This analysis combines of three data sets(sea ice data, happiness data and cyclone's data) to explore different connections between each data set like examining the well-being, environmental conditions and cyclone occurrences. Firstly, the happiness data set shows the social-economic and well-being across different countries. The sea ice data talks about the ice extent in different regions over time. And lastly, the cyclones data consists of the cyclone identifiers across the world with date and time stamps. The purpose of this analysis is to discover the relationship between happiness, climate change and cyclones patterns. We used general techniques to Our team thinks that "If sea ice decline, hurricanes are more common, and social stability gets negative impact. " further we'll see if our thoughts are right.
 
 General context, very brief data descriptions, techniques used, and general conclusions, all contained within a single, concise paragraph.
 
@@ -284,9 +285,18 @@ happiness <- read.xlsx("DataForTable2.1.xlsx") |>
     ) |>
   filter(
     !is.na(life_ladder)
-  ) |
+  ) |>
   group_by(country) |>
-  slice_max(year, n=1)
+  slice_max(year, n=1) |>
+  ggplot(aes(x = social_support,y = freedom_to_make_life_choices))+
+  geom_point(aes(color = life_ladder),alpha = 0.6)+
+  geom_smooth(method = "lm", se=FALSE)+
+  labs(title = "Social Support vs. Freedom and Its Impact on Happiness",
+       x = "Social Support",
+       y = "Freedom to Make Life Choices",
+       color = "Life Ladder") +
+  theme_minimal()
+  
 
 happiness
 ```
