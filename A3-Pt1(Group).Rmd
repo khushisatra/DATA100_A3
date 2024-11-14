@@ -547,11 +547,10 @@ In the chunk below, aggregate the data to be total cases in 2020, by country. Yo
 ```{r covid_2020, error=TRUE}
 # YOUR CODE HERE
 covid_2020 <- covid_cases|>
-  filter(year(date) == 2020 & !is.na(continent))|>
-  group_by(location, continent) |>
+  filter(year(date) == 2020)|>
+  group_by(country = location, continent) |>
   summarise(total_cases = max(total_cases, na.rm = TRUE),
             .groups = "drop")|>
-  rename( country = location)|> 
   select(country, continent, total_cases)
   
 
