@@ -727,8 +727,8 @@ Join `aware_pop` and `covid_2020_match_country`, again only keep countries that 
 ```{r aware_covid, error=TRUE}
 # YOUR CODE HERE
 aware_covid <- covid_2020_match_country|>
-  inner_join(aware_pop, by = c("country", "total_population", "aware_no", "aware_alittle", "aware_moderate", "aware_alot","aware_refuse" ))|>
-  mutate(cases_per_capita = total_cases/total_population)
+  inner_join(aware_pop, by = c("country"))|>
+  mutate(covid_per_capita = total_cases/total_population)
 
 aware_covid
 ```
@@ -822,10 +822,43 @@ write_parquet(happiness, "happiness.parquet")
 # Joining The Data (Ideas)
 
 ```{r}
-combined_data <- bind_rows(ice_extent_yearly,climate_awareness, cyclones_data)
+ice_extent_yearly_md <- ice_extent_daily |>
+  group_by(year, region) |>
+  summarise(
+  min = min(ice_extent),
+  max = max(ice_extent),
+  .groups = "drop"
+  )
+  ice_extent_yearly_md
 
-combined_data
+merged_data <- climate_awareness|>
+  inner_join(happiness, by = "country") |>
+  inner_join(ice_extent_yearly_md, by = "year")
+
+merged_data
+
+
+ggplot(merged_data, aes(x = min, y = aware_no)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Min Ice Extent vs Climate Awareness", x = "Min Ice Extent", y = "Climate Awareness (No)")
+
+ggplot(merged_data, aes(x = max, y = life_ladder)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Max Ice Extent vs Happiness", x = "Max Ice Extent", y = "Average Life Ladder (Happiness)")
 ```
 
 ```{r}
+
+ggplot(merged_data, aes(x = year)) +
+  geom_line(aes(y = min, color = "Min Ice Extent"), size = 1) +
+  geom_line(aes(y = max, color = "Max Ice Extent"), size = 1) +
+  scale_color_manual(values = c("blue", "red")) +
+  labs(
+    title = "Sea Ice Extent Over Time",
+    x = "Year", y = "Sea Ice Extent (Million km²)",
+    color = "Ice Extent Type"
+  ) +
+  theme_minimal()
 ```
