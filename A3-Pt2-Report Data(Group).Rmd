@@ -117,7 +117,10 @@ After loading in the data from the Excel sheet, the following steps are done in 
 
 1.  Pivoting
 2.  Renaming the survey options to shorter and more clear description.
-3.  
+3.  Mutating Values
+4. Renaming Columns
+5. Pivoting wider
+6. Writing to Parquet
 
 ## \<\<Sea Ice Data\>\>
 
