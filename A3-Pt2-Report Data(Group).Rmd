@@ -1,0 +1,364 @@
+---
+title: "TITLE OF YOUR PROJECT"
+author: "Group 3"
+date: "November 12th, 2024"
+output: pdf_document
+---
+
+List your group members, including their student numbers, here:
+
+-   Noya Barak (169097527)
+
+-   Sara Haifa (169087012)
+
+-   Satinder Kaur (169109308)
+
+-   Spencer Mozeg (169099531)
+
+-   Khushi Satra, (203383100)
+
+You **must** be in a group in MyLS in order to see the DropBox used for submission. Even if you're alone, you must join a group by yourself.
+
+You **must** be in a group with people from the same section as you. MyLS does not allow for groups including students from both Data100A and Data100B.
+
+```{r setup, include=FALSE}
+# echo = FALSE will set the Rmd to *not* show the R code. Don't change this.
+# You may change the default figure width and figure height as you please.
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, fig.width = 6)
+
+# Put any libraries that you need to load here.
+# DO NOT PUT "install.packages()" IN AN RMD FILE!!!
+library(tidyverse)
+library(arrow)
+```
+
+# Instructions
+
+You are encouraged to remove this instruction section prior to submission.
+
+It is recommended that you follow the structure of this template. The text is all placeholder - you are free to change any/all wording as you please, but it is very helpful for the grading process if you keep the same structure. Anything in \<<double angle brackets>\> definitely needs to be changed, but you are free to change any/all sentences!
+
+Note that all of the code is *hidden* by default. This file will be graded based on the insights, not the code.
+
+You will only submit the PDF version of this document. To knit to PDF, you'll need to run `install.packages("tinytex")` in the console, followed by `tinytex::install_tinytex()` (DO NOT PUT THESE COMMANDS IN AN RMD FILE!!!). If you encounter errors in "Knit to PDF", you can "knit to html" and then print the html file to PDF using your operating system's PDF view (e.g. Adobe Acrobat). Only standalone PDF files will be accepted by MyLS.
+
+# Abstract
+
+-   If sea ice decline, hurricanes are more common, and social stability gets negative impact.
+
+General context, very brief data descriptions, techniques used, and general conclusions, all contained within a single, concise paragraph.
+
+# Introduction
+
+Climate change is something that has been studied. Here's some relevant information about the context of our study.
+
+If needed, this paragraph is more information about the context.
+
+In this report, we are going to explore some aspects climate change and the impact and/or perceptions of it by using exploratory techniques. We'll explore \<<general description of data>\> using \<<general description of techniques>\>.
+
+By the end of this report, we will have shown ...
+
+# Data Description
+
+## \<\<Climate Awareness\>\>
+
+```{r load_data1}
+# Put in your code to load in the data set, along with any
+# necessary cleaning beyond what was done in Part 1
+
+# Note that the code in this document will not be shown
+# when you click "knit", so the placement of this code
+# chunk is purely for your benefit: You can see what happened
+# with your data, which makes it easier to describe below!
+
+climate_opinion_address <- "https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx"
+
+climate_sheet_names <- climate_opinion_address |>
+    loadWorkbook() |>
+    names()
+
+aware_sheet_name <- "climate_awareness"
+
+climate_awareness <- climate_opinion_address |>
+    read.xlsx(
+        sheet = aware_sheet_name
+    ) |>
+    pivot_longer(
+        cols = !contains(aware_sheet_name),
+        names_to = "country",
+        values_to = "score"
+    ) |>
+    mutate(
+        climate_awareness = case_when(
+            climate_awareness == "I have never heard of it" ~ "aware_no",
+            climate_awareness == "I know a little about it" ~ "aware_alittle",
+            climate_awareness == "I know a moderate amount about it" ~
+                "aware_moderate",
+            climate_awareness == "I know a lot about it" ~ "aware_alot",
+            climate_awareness == "Refused" ~ "aware_refuse",
+            climate_awareness == "(Unweighted Base)" ~ "aware_base"
+        )
+    ) |>
+    rename(answer = climate_awareness) |>
+    pivot_wider(
+        names_from = answer,
+        values_from = score
+    )
+
+write_parquet(climate_awareness, "climate_awareness.parquet")
+
+climate_awareness
+```
+
+The data come from [a climate awareness survey](https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx)***(Add footnote here for references)*** and describes countries awreness of climate change, grouping them into people who are knowledgeable about climate change to people who's never heard of it. This survey helps analysts
+
+After loading in the data from the Excel sheet, the following steps are done in order to clean the data:
+
+1.  Pivoting
+2.  Renaming the survey options to shorter and more clear description.
+3.  
+
+## \<\<Sea Ice Data\>\>
+
+```{r load_data2}
+# Put in your code to load in the data set, along with any
+# necessary cleaning beyond what was done in Part 1
+
+# Reminder: do NOT print your data to the screen unless it's
+# completely necessary
+#-----------------------------------------------------------------------------------
+
+knitr::opts_chunk$set(error = TRUE)
+library(tidyverse)
+theme_set(theme_bw())
+library(arrow)
+library(openxlsx)
+
+# Loading the data
+sea_ice_extent_xlsx <- "https://masie_web.apps.nsidc.org/pub//DATASETS/NOAA/G02135/seaice_analysis/Sea_Ice_Index_Daily_Extent_G02135_v3.0.xlsx"
+
+
+NH_daily <- sea_ice_extent_xlsx |>
+    read.xlsx(
+        sheet = "NH-Daily-Extent",
+    ) |>
+    select(X1, X2, `1978`:`2023`) |>
+    rename(
+        month = X1,
+        day = X2
+    ) |>
+    fill(month) |>
+    pivot_longer(
+        cols = `1978`:`2023`,
+        names_to = "year",
+        values_to = "ice_extent",
+        values_drop_na = TRUE,
+    ) |>
+    mutate(
+        year = as.integer(year),
+        month = ordered(
+            month,
+            levels = c("January", "February", "March", "April",
+                "May", "June", "July", "August", "September",
+                "October", "November", "December")),
+        region = "Arctic",
+    ) |>
+    arrange(
+        year, month, day
+    )
+
+NH_daily 
+
+
+SH_daily <- sea_ice_extent_xlsx |>
+    read.xlsx(
+        sheet = "SH-Daily-Extent",
+        skipEmptyCols = TRUE,
+        fillMergedCells = TRUE,
+        cols = 1:48
+    ) |>
+    rename(
+        month = X1,
+        day = X2
+    ) |>
+    pivot_longer(
+        cols = `1978`:`2023`,
+        names_to = "year",
+        names_transform = list(year = as.integer),
+        values_to = "ice_extent",
+        values_drop_na = TRUE,
+    ) |>
+    mutate(
+        month = ordered(
+            month,
+            levels = c("January", "February", "March", "April",
+                "May", "June", "July", "August", "September",
+                "October", "November", "December")
+        ),
+        region = "Antarctic",
+    ) |>
+    arrange(
+        year, month, day
+    )
+
+SH_daily
+
+ice_extent_daily <- bind_rows(NH_daily, SH_daily) |>
+    mutate(date = make_date(year, month, day)) |>
+    arrange(region, date)
+
+ice_extent_daily
+
+
+ice_extent_daily |>
+    ggplot() +
+        aes(x = yday(date), y = ice_extent, colour = year, group = factor(year)) +
+        geom_line() +
+        facet_wrap(~region) +
+        #coord_polar() +
+        scale_colour_distiller(
+            direction = 1, type = "seq", palette = 3
+        )
+
+
+ice_extent_yearly <- ice_extent_daily |>
+  group_by(year, region) |>
+  summarise(
+  min = min(ice_extent),
+  max = max(ice_extent)
+  ) |> 
+  pivot_longer(
+    cols = c(min, max), 
+    names_to = "name", 
+    values_to = "value"
+    )
+  
+ice_extent_yearly
+
+ggplot(ice_extent_yearly) +
+    aes(x = year, y = value, colour = name) +
+    geom_line() +
+    facet_wrap(~ region) +
+    labs(
+        x = "Year", y = "Sea Ice Extent",
+        colour = "Stat",
+        title = "Min and Max Sea Ice Extent, by Year",
+        subtitle = "Arctic is clearly decreasing, Antarctic is possibly becoming more variable."
+    )
+
+write_parquet(ice_extent_yearly, "ice_extent_yeary.parquet")
+
+```
+
+The data set come from [Sea Ice - NOAA Arctic](https://arctic.noaa.gov/report-card/report-card-2023/sea-ice-2023/) ***(Add footnote here for references)***, and details specific Arctic regions and their sea ice extent, that is, the total area covered in ice of at least 15% concentration. It includes the date in which the value was calculated, including its month, day and year. Sea ice extent is used to analyze many things, but in this report we will mainly focus on its impact on climate change.
+
+Within the `sea_ice_extent_xlsx` variable, the file contains data on daily sea ice extent data for both the Northern Hemisphere (NH) and Southern Hemisphere (SH), stored in separate sheets (`NH-Daily-Extent` and `SH-Daily-Extent`). This means that they needed to both be cleaned up individually, and then joined together for future and more thought-provoking analysis. The following process describes why and how tidying up looked like:
+
+1.  Cleaning the Northern Hemisphere Data (`NH-Daily-Extent)`
+    -   Only the relevant columns are selected: `X1` (month), `X2` (day), and columns from 1978 to 2023 (years of sea ice extent data). The `X1` and `X2` columns are renamed to `month` and `day` for clarity.
+    -   The `fill()` function fills down missing month values to complete the data where the month is blank for some rows (meaning each row is surely specified of the month, a bit different from the excel sheet).
+    -   The data is pivoted from a wide format (with separate columns for each year) to a long format with `year` and `ice_extent` columns. This format is better suited for time-series analysis.
+    -   Furthermore, `year` is converted to an integer for easier numerical operations, `month` is converted to an ordered factor to ensure correct chronological order, and the `region` column is added with the value `"Arctic"` for identification. Then these are arranged, mainly for an easier sequence to look at.
+2.  Cleaning the Southern Hemisphere Data (`SH_daily`)
+    -   The data is read similarly to the Northern one (using `read.xlsx)`but with additional parameters to handle empty columns and merged cells, setting `cols = 1:48` to specify the necessary range.
+    -   Again, like the NH data, columns are renamed, pivoted longer is used to format specific columns, and mutated of certain columns for better variable types. It is also arranged correspondingly.
+3.  Joining the Hemispheres
+    -   Using `bind_rows`, the data sets are combined to create `ice_extent_daily.` While doing so, a new column is created, `date`, that is generate dby combining the month, date, and year into a single variable - making the data more concise.
+    -   Then the data is then sorted by `region` and `date` for easier plotting and analysis.
+4.  Plotting
+    -   To summarize annual trends, we can calculate yearly minimum and maximum ice extents to make an insightful plot. To do so, we group `year` and `region`, to then calculate the statistics and pivot it under new names with its corresponding value.
+    -   Finally, the annual minimum and maximum extents are plotted: **x-axis**: Year, **y-axis**: Sea ice extent (min and max), **folor**: Differentiates between min and max values, **faceting**: Split by region, allowing analysis of trends across regions. Finally, we save the data.
+        -   This plot lets us know that: "Arctic is clearly decreasing, Antarctic is possibly becoming more variable."
+5.  In summary, this analysis indicates that while the Arctic is experiencing a consistent decline in sea ice, the Antarctic's sea ice is less predictable and might be influenced by different climatic factors. This contrast is important for understanding regional differences in how climate change impacts the polar regions.
+
+## \<\<World Happiness Report Score (from 2023 Report)\>\>
+
+```{r load_data2}
+# Put in your code to load in the data set, along with any
+# necessary cleaning beyond what was done in Part 1
+
+happiness <- read.xlsx("DataForTable2.1.xlsx") |>
+    janitor::clean_names() |>
+    rename(
+      country = 'country_name'
+    ) |>
+  filter(
+    !is.na(life_ladder)
+  ) |
+  group_by(country) |>
+  slice_max(year, n=1)
+
+happiness
+```
+
+The data come from [Home \| The World Happiness Report](https://worldhappiness.report/) (specifcally used from [here](https://worldhappiness.report/ed/2023/#appendices-and-data)) and records the areas of 'happiness' in each country. The column closest to this measure is the `life_ladder` column;happiness in each country.
+
+In Part 1, cleaning up life_ladder was focused on. Tidying up this column had the following steps.
+
+`Janitor` used to clean up the names, renaming the country column (from `country_name`), filtering out the missing/incomplete values (`NA's`), and only focusing on recent observations and values.
+
+## Combining the Data
+
+Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
+
+# Exploratory Data Analysis
+
+To achieve our goals, we explored the data by...
+
+We explored many aspects of the data, but will demonstrate three. These are \<\<insight 1\>\>, \<\<insight 2\>\>, and \<<insight3>\>
+
+The first aspect that we found interesting is shown in \@ref(fig:insight1). The insight should be specific to the data shown, not a general statement beyond the data (leave that for the conclusion).
+
+```{r insight1, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+# This is an example of how you can control figures and captions in
+# an R chunk. Note that you can reference figures using:
+# \@ref(fig:insight1), where "insight1" is the label of this code
+# chunk (the first bit of text after the "r" in "```{r label, options...}")
+```
+
+This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
+
+```{r summary_stats}
+# Calculate the relevant summary statistics here.
+# Note that the "kable" function in the "knitr" package
+# is convenient for making nice tables. Other packages can
+# do much fancier things with tables, but keep in mind that
+# the insights should be the star, not the formatting.
+```
+
+The next insight that we found is shown in \@ref(fig:insight2).
+
+```{r insight2, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+# This figure will have a height of 4 and a width of 6.
+# Feel free to change this, and to apply different sizes
+# to the other figures you create.
+```
+
+Finally, \@ref(fig:insight3) shows ...
+
+```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+```
+
+# Conclusion and Future Work
+
+Overall, we found \<<general ideas>\>.
+
+A second paragraph about our findings.
+
+The next steps in this analysis are...
+
+The limitations of this analysis are as follows. (Do not simply list potential issues with sampling, but relate them to your analysis and how they affect your conclusions. An honest and complete acknowledgement of the limitations makes the analysis more trustworthy.)
+
+# References
+
+I am not strict about MLA or APA style or anything like that. For this report, I would much rather have your citations be easy to match to your insights.
+
+The easiest way is to use Rmd's [footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting) syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is:[^1], where I suggest that you put in something like this[^2] to make references for this assignment.
+
+[^1]: See the source view to see this footnote
+
+[^2]: The relevance to the insight is ... . From \<<name of source and name of article>\>, published on \<<date>\>, url: \<<link to page>\>
+
+Alternatively, you could make a list of citations with their main arguments and why they're relevent to your insights, methods, etc.
+
+The link above also references "bibtex" files. These are also extremely convenient, but have a steep learning curve and they make it difficult to tie them to an insight. If you use bibtext, then make sure that you provide a sentence to describe the source and it's relevance when you cite it - don't just add citations to the end of a sentence (this is common practice in academia, but I want to know that your citations are directly relevant for this assignmnet).
