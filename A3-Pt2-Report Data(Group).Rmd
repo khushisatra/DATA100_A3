@@ -203,7 +203,26 @@ The first aspect that we found interesting is shown in \@ref(fig:insight1). The 
 # an R chunk. Note that you can reference figures using:
 # \@ref(fig:insight1), where "insight1" is the label of this code
 # chunk (the first bit of text after the "r" in "```{r label, options...}")
+
+aware_happiness <- inner_join(climate_awareness_update2, happiness, by = "country")|>
+rename( awareness_level = answer)|>
+  arrange(desc(log_gdp_per_capita))|>
+  head(30)
+  
+aware_happiness
 ```
+plot_aware_happiness<-
+ ggplot(aware_happiness, aes(x= country, y= life_ladder, fill = score ))+
+  geom_bar(stat =  "identity")+
+  geom_smooth( method = "lm")+
+  facet_wrap(~awareness_level)+
+   
+   labs(title = "Happiness of People based on their climate awareness",
+        x = "Countries with highest GDP per capita",
+        y = "Ranking based on average happiness/ life satisfaction")+
+   theme(axis.text.x = element_text(angle = 90))
+
+plot_aware_happiness
 
 This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
 
