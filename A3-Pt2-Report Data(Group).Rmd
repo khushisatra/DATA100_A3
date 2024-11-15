@@ -117,6 +117,71 @@ Collected from [here](https://covid.ourworldindata.org/data/owid-covid-data.csv)
 
 When we tidied up the data, we focused specifically on covid cases. Firstly, after loading out the data, we defined the columns with various functions, to ensure correct data types for example. Then we filtered by year as every collection was from the same year but different periods of 2020, which just made the data more cleaner. Next, we grouped location and continent to connect the pairs, summarized total cases to sum up the cases, and removed NA to ensure correct values. After that, we selected country, continent, and total_cases as those were our main columns we wanted to focus on.
 
+```{r}
+pop_data <- wb_data("SP.POP.TOTL", start_date = 2020, end_date = 2020)
+
+pop_countries <- pop_data |> pull(country)
+aware_countries <- climate_awareness |> pull(country)
+
+aware_fixed_country <- climate_awareness |>
+    mutate(
+        # Replace *all* *literal* periods with a space in the country column
+        # YOUR CODE HERE
+        country = str_replace_all(aware_countries,"\\.", " ")
+    )
+pop_countries <- pop_data |> pull(country)
+aware_countries <- aware_fixed_country |> pull(country)
+
+aware_fixed_country_match <- aware_fixed_country |>
+  mutate(
+ country = case_when(
+        country == "Bolivia (Plurinational State of)" ~ "Bolivia",
+        country == "Congo (Democratic Republic of the)" ~ "Congo, Dem. Rep.",
+        country == "Egypt" ~ "Egypt, Arab Rep.",
+        country == "Hong Kong" ~ "Hong Kong SAR, China",
+        country == "Lao People's Democratic Republic" ~ "Lao PDR",
+        country == "Slovakia" ~ "Slovak Republic",
+        country == "North MAcedonia" ~ "North Macedonia",
+        country == "South Korea" ~ "Korea, Rep.",
+        country == "Turkey" ~ "Turkiye",
+        country == "Vietnam" ~ "Viet Nam",
+        country == "Yemen" ~ "Yemen, Rep.",
+        TRUE~country
+        )
+    )
+aware_countries <- aware_fixed_country_match |> pull(country)
+
+aware_pop <- 
+  inner_join(aware_fixed_country_match, pop_data, by = "country" )|>
+  rename( total_population = SP.POP.TOTL)|>
+select(country, total_population, aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse)
+  
+aware_countries <- aware_pop |> pull(country) |> unique()
+covid_countries <- covid_2020 |> pull(country) |> unique()
+
+covid_2020_match_country <- covid_2020|>
+mutate(
+    country = case_when(
+      country == "Congo"~ "Congo, Dem. Rep." ,
+      country == "Egypt" ~"Egypt, Arab Rep."  ,
+      country == "Hong Kong" ~"Hong Kong SAR, China" ,
+      country == "Laos" ~"Lao PDR"  ,
+      country == "Slovakia" ~"Slovak Republic" ,
+      country == "South Korea" ~"Korea, Rep." ,
+      country == "Turkey" ~"Turkiye"  ,
+      country == "Vietnam" ~"Viet Nam" ,
+      country == "Yemen" ~"Yemen, Rep." ,
+      TRUE~ country
+    )
+  )
+
+aware_covid <- covid_2020_match_country |>
+  #select(country, continent, total_cases) |>
+  inner_join(aware_pop, by = "country") |>
+  mutate(covid_per_capita = total_cases/total_population)
+aware_covid
+```
+
 ## 3. World Happiness Report Score (from 2023 Report)
 
 ```{r load_data3}
