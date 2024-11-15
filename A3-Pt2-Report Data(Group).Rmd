@@ -182,43 +182,7 @@ This dataset was taken from [Home \| The World Happiness Report](https://worldha
 
 In Part 1, cleaning up life_ladder was focused on. Tidying up this column had the following steps. `Janitor` used to clean up the names (turns uppercase into lower case and replacing spaces or such with underscores), renaming the country column (from `country_name`), filtering out the missing/incomplete values (`NA's`), and lastly only focusing on recent observations.
 
-happiness_covid <- covid_2020 |>
-  inner_join(happiness, by = "country") 
-happiness_covid
 
-
-happiness_covid_altered <- happiness_covid |>
-  group_by(country) |>
-  mutate(
-    total_covid_cases = sum(total_cases[year %in% c(2020, 2021, 2022, 2023, 2024)], na.rm = TRUE),
-    corruption_base = case_when(
-      perceptions_of_corruption < 0.3333 ~ "low corruption",
-      perceptions_of_corruption >= 0.3333 & perceptions_of_corruption < 0.6666 ~ "medium corruption",
-      perceptions_of_corruption >= 0.6666 ~ "high corruption"
-    )
-  ) |>
-  ungroup()
-  happiness_covid_altered_filtered <- happiness_covid_altered |>
-  filter(
-    total_covid_cases >= (quantile(total_covid_cases, 0.25) - 1.5*IQR(total_covid_cases)) &
-    total_covid_cases <= (quantile(total_covid_cases, 0.75) + 1.5*IQR(total_covid_cases))
-  )
-happiness_covid_plot <- happiness_covid_altered_filtered |>
-  ggplot(aes(x = log_gdp_per_capita, y = total_covid_cases, color = corruption_base)) +
-  geom_point(size = 1.2, alpha = 0.7) + 
-
-  scale_color_manual(values = c("low corruption" = "blue", "medium corruption" = "orange", "high corruption" = "red")) +
-  labs(
-    x = "Log GDP per Capita",
-    y = "Total COVID-19 Cases (Log Scale)",
-    color = "Corruption Level",
-    title = "COVID-19 Total Cases vs. GDP per Capita by Corruption Level",
-    caption = "Each point represents a country, colored by corruption level"
-  ) +
-  facet_wrap(~continent) +
-  theme_minimal() 
-                        
-happiness_covid_plot
 
 Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
 
@@ -227,36 +191,21 @@ Explain how any combinations of data were performed. Explain what kind of join w
 3. The only column that we modifed was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
 4. The plot that we made thus combined information from both the covid dataset (continent data and total covid cases) and data from the happiness dataset (gdp per capita and corruption rates)
 5. Through this, we can see how countries who overall generate less capital per person's population is affected by covid, and also if certain continents in the world's covid rates were higher
-6. Additionally, 
 
-summary_table <- happiness_covid_altered_filtered |>
-  group_by(corruption_base) |>
-  summarize(
-    mean_total_cases = mean(total_covid_cases, na.rm = TRUE),
-    median_total_cases = median(total_covid_cases, na.rm = TRUE),
-    sd_total_cases = sd(total_covid_cases, na.rm = TRUE),
-    mean_log_gdp = mean(log_gdp_per_capita, na.rm = TRUE),
-    median_log_gdp = median(log_gdp_per_capita, na.rm = TRUE),
-    sd_log_gdp = sd(log_gdp_per_capita, na.rm = TRUE),
-    mean_happiness = mean(happiness_score, na.rm = TRUE),
-    median_happiness = median(happiness_score, na.rm = TRUE),
-    sd_happiness = sd(happiness_score, na.rm = TRUE)
-  )
-summary_table |>
-  kable(
-    caption = "Summary Statistics by Corruption Level",
-    col.names = c("Corruption Level", 
-                  "Mean Total Cases", "Median Total Cases", "SD Total Cases", 
-                  "Mean Log GDP", "Median Log GDP", "SD Log GDP",
-                  "Mean Happiness", "Median Happiness", "SD Happiness")
-  ) 
 # Exploratory Data Analysis
 
 To achieve our goals, we explored the data by visualization specific information into plots, and recognizing its patterns.
 
 We explored many aspects of the data, but will demonstrate three. These are \<\<insight 1\>\>, \<\<insight 2\>\>, and \<<insight3>\>
 
-The first aspect that we found interesting is shown in \@ref(fig:insight1). The insight should be specific to the data shown, not a general statement beyond the data (leave that for the conclusion).
+The first aspect that we found interesting is how people's happiness based on their climate awareness by looking at how climate change issues aligns with happiness indicators(e.g. life satisfaction, well-being, and economic factors) across the top 5 countries who has highest GDP per capita in the world. shown in \@ref(fig:insight1).
+
+This plot provides an analysis of the relationship between climate awareness and happiness (measured by life_ladder) across countries with high GDP per capita. By examining these factors, we understand how climate awareness correlates with life satisfaction in economically advanced regions.
+
+The x-axis represent the countries with highest GDP per capita and the y-axis indicates life satisfaction where higher values tells greater life satisfaction. The data is split by awareness_level using facet_wrap(), allowing for comparison across different levels of climate awareness where fill colour intesity varies based on the climate awareness score.
+
+The height of each bar represents the life satisfaction score for a particular country based on their awareness level.The fill color, which represents the awareness score, provides a visual cue about the intensity of climate awareness.The faceted display allows us to compare life satisfaction across different awareness levels independently, offering insights into how various awareness levels relate to happiness.
+This plot suggest trends that could lead to further investigation. For example, if higher awareness levels correlate with higher life satisfaction, it could imply that awareness positively affects quality of life, possibly through environmental values and proactive behaviors.
 
 ```{r insight1, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
 # This is an example of how you can control figures and captions in
