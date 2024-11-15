@@ -284,6 +284,28 @@ plot_aware_happiness<-
 
 plot_aware_happiness
 
+
+
+summary_stats <- aware_happiness |>
+  summarise(
+    mean_life_ladder = mean(life_ladder, na.rm = TRUE),
+    median_life_ladder = median(life_ladder, na.rm = TRUE),
+    sd_life_ladder = sd(life_ladder, na.rm = TRUE),
+    
+    mean_gdp = mean(log_gdp_per_capita, na.rm = TRUE),
+    median_gdp = median(log_gdp_per_capita, na.rm = TRUE),
+    sd_gdp = sd(log_gdp_per_capita, na.rm = TRUE),
+    
+    mean_score = mean(score, na.rm = TRUE),
+    median_score = median(score, na.rm = TRUE),
+    sd_score = sd(score, na.rm = TRUE)
+  )
+
+summary_stats
+
+
+
+
 This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
 
 ```{r summary_stats}
