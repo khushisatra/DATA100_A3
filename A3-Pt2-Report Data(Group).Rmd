@@ -379,8 +379,7 @@ summary_stats_aware_covid_happiness <- aware_covid_happiness|>
   group_by(continent)|>
   summary() 
 
-kable(
-  capture.output(summary_stats_aware_covid_happiness),
+summary_stats_aware_covid_happiness |> kable(
   caption = "Summary Statistics of Positive Affect and Covid Cases per Capita by Continent"
 )
 
