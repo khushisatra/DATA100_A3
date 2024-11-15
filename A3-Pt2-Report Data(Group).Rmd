@@ -182,13 +182,50 @@ This dataset was taken from [Home \| The World Happiness Report](https://worldha
 
 In Part 1, cleaning up life_ladder was focused on. Tidying up this column had the following steps. `Janitor` used to clean up the names (turns uppercase into lower case and replacing spaces or such with underscores), renaming the country column (from `country_name`), filtering out the missing/incomplete values (`NA's`), and lastly only focusing on recent observations.
 
-## Combining the Data
+happiness_covid <- covid_2020 |>
+  inner_join(happiness, by = "country") 
+happiness_covid
+
+
+happiness_covid_altered <- happiness_covid |>
+  group_by(country) |>
+  mutate(
+    total_covid_cases = sum(total_cases[year %in% c(2020, 2021, 2022, 2023, 2024)], na.rm = TRUE),
+    corruption_base = case_when(
+      perceptions_of_corruption < 0.3333 ~ "low corruption",
+      perceptions_of_corruption >= 0.3333 & perceptions_of_corruption < 0.6666 ~ "medium corruption",
+      perceptions_of_corruption >= 0.6666 ~ "high corruption"
+    )
+  ) |>
+  ungroup()
+  happiness_covid_altered_filtered <- happiness_covid_altered |>
+  filter(
+    total_covid_cases >= (quantile(total_covid_cases, 0.25) - 1.5*IQR(total_covid_cases)) &
+    total_covid_cases <= (quantile(total_covid_cases, 0.75) + 1.5*IQR(total_covid_cases))
+  )
+happiness_covid_plot <- happiness_covid_altered_filtered |>
+  ggplot(aes(x = log_gdp_per_capita, y = total_covid_cases, color = corruption_base)) +
+  geom_point(size = 1.2, alpha = 0.7) + 
+
+  scale_color_manual(values = c("low corruption" = "blue", "medium corruption" = "orange", "high corruption" = "red")) +
+  labs(
+    x = "Log GDP per Capita",
+    y = "Total COVID-19 Cases (Log Scale)",
+    color = "Corruption Level",
+    title = "COVID-19 Total Cases vs. GDP per Capita by Corruption Level",
+    caption = "Each point represents a country, colored by corruption level"
+  ) +
+  facet_wrap(~continent) +
+  theme_minimal() 
+                        
+happiness_covid_plot
 
 Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
 
-1.  dwdw
-2.  wdw
-3.  
+1. We performed the combination of the data through the inner_join function
+2. This helps recognize which countries are mutual between the two datasets, and therefore we do not have any missing data per country due to merging
+3. The only column that we modifed was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
+4. The plot that we made thus combined 
 
 # Exploratory Data Analysis
 
