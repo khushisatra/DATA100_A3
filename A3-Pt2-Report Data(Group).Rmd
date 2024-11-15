@@ -34,7 +34,7 @@ You will only submit the PDF version of this document. To knit to PDF, you'll ne
 
 # Abstract
 
-The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three disitnct data sets might have a relationship, and we do so by using R code.
+The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three disitnct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data.
 
 This report aims to explore the correlation of.... (1), (2), (3)..
 
