@@ -349,6 +349,19 @@ summary_table |>
 Finally, \@ref(fig:insight3) shows ...
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")|>
+  ggplot() +
+    aes(x = positive_affect, y = covid_per_capita, colour = continent) +
+    geom_point() +
+    geom_smooth(se = FALSE, method = "lm", formula = y ~ x) +
+    labs(
+        x = "Positive Affect",
+        y = "Total covid cases per capita",
+        title = "Covid Cases versus Positive Affect",
+        colour = "Continent"
+    )
+
+aware_covid_happiness
 ```
 
 # Conclusion and Future Work
