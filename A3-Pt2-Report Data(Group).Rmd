@@ -352,7 +352,7 @@ summary_table |>
 
 ```
 
-Finally, \@ref(fig:insight3) shows the relationship between the positive affect and the total covid cases per capita for every continent. This analysis was performed by using the column covid per capita and positive affect.
+Finally, \@ref(fig:insight3) shows the relationship between people's positive emotional experiences (positive affect column in happiness data) and the number of covid cases per capita (aware_covid data) across different continents. Plotting these two variables will allow us to see whether there is a clear trend that connects the number of cases of covid with higher or lower levels of positive affect. Because the data is displayed independently for every continent, we can see regional variations and determine whether geographic or cultural factors may have an impact on the connection between covid distribution and emotional well-being. 
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
 aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")
