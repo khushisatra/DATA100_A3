@@ -204,7 +204,7 @@ To achieve our goals, we explored the data by visualization specific information
 
 We explored many aspects of the data, but will demonstrate three. These are \<\<insight 1\>\>, \<\<insight 2\>\>, and \<<insight3>\>
 
-The first aspect that we found interesting is how people's happiness based on their climate awareness by looking at how climate change issues aligns with happiness indicators(e.g. life satisfaction, well-being, and economic factors) across the top 5 countries who has highest GDP per capita in the world. shown in \@ref(fig:insight1).
+The first aspect that we found interesting is how people's happiness is based on their awareness of climate changes. We analysied it by looking at how climate change issues aligns with happiness indicators(e.g. life satisfaction, well-being, and economic factors) across the top 5 countries who has highest GDP per capita in the world. shown in \@ref(fig:insight1).
 
 This plot provides an analysis of the relationship between climate awareness and happiness (measured by life_ladder) across countries with high GDP per capita. By examining these factors, we understand how climate awareness correlates with life satisfaction in economically advanced regions.
 
@@ -352,22 +352,24 @@ summary_table |>
 
 ```
 
-Finally, \@ref(fig:insight3) shows ...
+Finally, \@ref(fig:insight3) shows the relationship between the positive affect and the total covid cases per capita for every continent. This analysis was performed by using the column covid per capita and positive affect.
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
-aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")|>
+aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")
+aware_covid_happiness
+
+aware_covid_happiness_plot <- aware_covid_happiness |>
   ggplot() +
-    aes(x = positive_affect, y = covid_per_capita, colour = continent) +
-    geom_point() +
-    geom_smooth(se = FALSE, method = "lm", formula = y ~ x) +
+    aes(x = positive_affect, y = covid_per_capita) +
+    geom_point(alpha = 0.6) +
+    geom_smooth(se = FALSE, method = "lm", formula = y ~ x)+
+   facet_wrap(~ continent) +
     labs(
         x = "Positive Affect",
         y = "Total covid cases per capita",
-        title = "Covid Cases versus Positive Affect",
-        colour = "Continent"
+        title = "Covid Cases versus Positive Affect with No Awareness"
     )
-
-aware_covid_happiness
+aware_covid_happiness_plot
 ```
 
 # Conclusion and Future Work
