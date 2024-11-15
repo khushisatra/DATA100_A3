@@ -300,6 +300,10 @@ The next insight that we found is shown in \@ref(fig:insight2).
 # This figure will have a height of 4 and a width of 6.
 # Feel free to change this, and to apply different sizes
 # to the other figures you create.
+
+The first thing we found interesting is we found how peoples happiness changed before and after Covid-19 another thing we found intruiging is how countries GPT per capita affects how many covid cases there are. We can extract how a nation's corruption level affects its GDP per capita and hence its covid cases (provided they are related). 
+
+
 happiness_covid <- covid_2020 |>
   inner_join(happiness, by = "country") 
 happiness_covid
