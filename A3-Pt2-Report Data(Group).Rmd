@@ -37,7 +37,10 @@ You will only submit the PDF version of this document. To knit to PDF, you'll ne
 
 # Abstract
 
-The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three distinct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data.
+The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three distinct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data. Some general conclusions were: 
+1. The top 5 country with higher gdp doesn't have a linear relationship with life ladder, and show basic awareness for climate changes.
+2. Higher corruption level seen in all continents, however there is more covid cases in areas with higher gdp.
+3. Surprisingly, there is no linear relationship between increasing covid cases per capita and positive affect. All the continents except North America, display a decrease in positive emotions with the increase in covid cases.
 
 # Introduction
 
