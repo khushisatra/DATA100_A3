@@ -98,8 +98,6 @@ climate_awareness <- climate_opinion_address |>
 write_parquet(climate_awareness, "climate_awareness.parquet")
 
 climate_awareness
-
-#Extra tidying 
 ```
 
 The data come from [a climate awareness surve](https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx)y ***(Add footnote here for references)*** and describes countries awareness of climate change, grouping them into people who are knowledgeable about climate change to people who's never heard of it. It comes from an Excel document with other related climate topics, brought from the [2020 survey](https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey).
