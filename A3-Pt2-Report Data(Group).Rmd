@@ -7,7 +7,7 @@ output:
     df_print: paged
 ---
 
-List your group members, including their student numbers, here:
+Report contributors:
 
 -   Noya Barak (169097527)
 
@@ -37,20 +37,17 @@ You will only submit the PDF version of this document. To knit to PDF, you'll ne
 
 # Abstract
 
-The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three distinct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data. Some general conclusions were: 
-1. The top 5 country with higher gdp doesn't have a linear relationship with life ladder, and show basic awareness for climate changes.
-2. Higher corruption level seen in all continents, however there is more covid cases in areas with higher gdp.
-3. Surprisingly, there is no linear relationship between increasing covid cases per capita and positive affect. All the continents except North America, display a decrease in positive emotions with the increase in covid cases.
+The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three distinct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data.
 
 # Introduction
 
 In 2020, global events such as the COVID-19 pandemic reshaped societal priorities, affecting public health, economic stability, and general well-being worldwide. This study explores the interrelations between national happiness levels, public awareness of climate change, and COVID-19 case data to understand broader implications on public sentiment and awareness, crossing over from the Covid 2020 data set, and Climate Awareness, and Happiness.
 
-We imported and tidied the datasets using techniques to ensure they combined seamlessly. The `dplyr` package was used for data manipulation (e.g., `filter()`, `mutate()`, `group_by()`), and `pivot_longer()`/`pivot_wider()` for reshaping. We standardized column names with `janitor::clean_names()` and handled missing values with `na.rm = TRUE`. Finally, the cleaned data was exported using `write_parquet().`
+We imported and tidied the data sets using techniques to ensure they combined seamlessly. The `dplyr` package was used for data manipulation (e.g., `filter()`, `mutate()`, `group_by()`), and `pivot_longer()`/`pivot_wider()` for reshaping. We standardized column names with `janitor::clean_names()` and handled missing values with `na.rm = TRUE`. Finally, the cleaned data was exported using `write_parquet().`
 
 In this report, we are going to explore some aspects climate change and the impact and/or perceptions of it by using exploratory techniques.
 
-By the end of this report, we will have shown ...
+By the end of this report, we will show how climate awareness, economic stability, and low corruption support well-being and resilience.
 
 # Data Description
 
@@ -88,7 +85,11 @@ write_parquet(climate_awareness, "climate_awareness.parquet")
 climate_awareness
 ```
 
-The data come from [a climate awareness surve](https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx)y ***(Add footnote here for references)*** and describes countries awareness of climate change, grouping them into people who are knowledgeable about climate change to people who's never heard of it. It comes from an Excel document with other related climate topics, brought from the [2020 survey](https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey). After loading in the data from the Excel sheet, we separated the country and score column and simplified the survey answers to clearer headings. After loading in the data from the Excel sheet, pivoting was used to reshape the data from a wide format (with each survey response category in separate columns) to a long format that is easier to analyze the score of countries. Then, we renamed the survey options to shorter codes simplifies the data for future processing and analysis. Using "aware_no" instead of lengthy descriptions such as "I have never heard of it" makes the code more concise and readable. The climate_awareness column was renamed as well to ensure clarity and consistency in column naming. Next, we restructured the data so that survey response categories are column names (e.g., aware_no, aware_alittle) and their respective scores are values, making it easier to analyze each country's awareness level. Finally, the cleaned data was saved as a a.parquet file.
+The data come from [a climate awareness surve](https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx)y [^1]and describes countries awareness of climate change, grouping them into people who are knowledgeable about climate change to people who's never heard of it. It comes from an Excel document with other related climate topics, brought from the [2020 survey](https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey) [^2]. After loading in the data from the Excel sheet, we separated the country and score column and simplified the survey answers to clearer headings. After loading in the data from the Excel sheet, pivoting was used to reshape the data from a wide format (with each survey response category in separate columns) to a long format that is easier to analyze the score of countries. Then, we renamed the survey options to shorter codes simplifies the data for future processing and analysis. Using "aware_no" instead of lengthy descriptions such as "I have never heard of it" makes the code more concise and readable. The climate_awareness column was renamed as well to ensure clarity and consistency in column naming. Next, we restructured the data so that survey response categories are column names (e.g., aware_no, aware_alittle) and their respective scores are values, making it easier to analyze each country's awareness level. Finally, the cleaned data was saved as a a.parquet file.
+
+[^1]: <https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx>
+
+[^2]: <https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey>
 
 ## 2. COVID-19 2020
 
@@ -116,74 +117,11 @@ covid_2020
 write_parquet(covid_2020, "covid_2020.parquet")
 ```
 
-Collected from [here](https://covid.ourworldindata.org/data/owid-covid-data.csv), this data set showcases the cases in each country (as well as its continent), reported in 2020. It contains a wide range of information as well (like life expectancy, total_deaths, etc.)
+Collected from [here](https://covid.ourworldindata.org/data/owid-covid-data.csv)[^3], this data set showcases the cases in each country (as well as its continent), reported in 2020. It contains a wide range of information as well (like life expectancy, total_deaths, etc.)
 
-When we tidied up the data, we focused specifically on covid cases. Firstly, after loading out the data, we defined the columns with various functions, to ensure correct data types for example. Then we filtered by year as every collection was from the same year but different periods of 2020, which just made the data more cleaner. Next, we grouped location and continent to connect the pairs, summarized total cases to sum up the cases, and removed NA to ensure correct values. After that, we selected country, continent, and total_cases as those were our main columns we wanted to focus on.
+[^3]: <https://covid.ourworldindata.org/data/owid-covid-data.csv>
 
-```{r}
-pop_data <- wb_data("SP.POP.TOTL", start_date = 2020, end_date = 2020)
-
-pop_countries <- pop_data |> pull(country)
-aware_countries <- climate_awareness |> pull(country)
-
-aware_fixed_country <- climate_awareness |>
-    mutate(
-        # Replace *all* *literal* periods with a space in the country column
-        # YOUR CODE HERE
-        country = str_replace_all(aware_countries,"\\.", " ")
-    )
-pop_countries <- pop_data |> pull(country)
-aware_countries <- aware_fixed_country |> pull(country)
-
-aware_fixed_country_match <- aware_fixed_country |>
-  mutate(
- country = case_when(
-        country == "Bolivia (Plurinational State of)" ~ "Bolivia",
-        country == "Congo (Democratic Republic of the)" ~ "Congo, Dem. Rep.",
-        country == "Egypt" ~ "Egypt, Arab Rep.",
-        country == "Hong Kong" ~ "Hong Kong SAR, China",
-        country == "Lao People's Democratic Republic" ~ "Lao PDR",
-        country == "Slovakia" ~ "Slovak Republic",
-        country == "North MAcedonia" ~ "North Macedonia",
-        country == "South Korea" ~ "Korea, Rep.",
-        country == "Turkey" ~ "Turkiye",
-        country == "Vietnam" ~ "Viet Nam",
-        country == "Yemen" ~ "Yemen, Rep.",
-        TRUE~country
-        )
-    )
-aware_countries <- aware_fixed_country_match |> pull(country)
-
-aware_pop <- 
-  inner_join(aware_fixed_country_match, pop_data, by = "country" )|>
-  rename( total_population = SP.POP.TOTL)|>
-select(country, total_population, aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse)
-  
-aware_countries <- aware_pop |> pull(country) |> unique()
-covid_countries <- covid_2020 |> pull(country) |> unique()
-
-covid_2020_match_country <- covid_2020|>
-mutate(
-    country = case_when(
-      country == "Congo"~ "Congo, Dem. Rep." ,
-      country == "Egypt" ~"Egypt, Arab Rep."  ,
-      country == "Hong Kong" ~"Hong Kong SAR, China" ,
-      country == "Laos" ~"Lao PDR"  ,
-      country == "Slovakia" ~"Slovak Republic" ,
-      country == "South Korea" ~"Korea, Rep." ,
-      country == "Turkey" ~"Turkiye"  ,
-      country == "Vietnam" ~"Viet Nam" ,
-      country == "Yemen" ~"Yemen, Rep." ,
-      TRUE~ country
-    )
-  )
-
-aware_covid <- covid_2020_match_country |>
-  #select(country, continent, total_cases) |>
-  inner_join(aware_pop, by = "country") |>
-  mutate(covid_per_capita = total_cases/total_population)
-aware_covid
-```
+When we tidied up the data, we focused specifically on Covid cases. Firstly, after loading out the data, we defined the columns with various functions, to ensure correct data types for example. Then we filtered by year as every collection was from the same year but different periods of 2020, which just made the data more cleaner. Next, we grouped location and continent to connect the pairs, summarized total cases to sum up the cases, and removed NA to ensure correct values. After that, we selected country, continent, and total_cases as those were our main columns we wanted to focus on.
 
 ## 3. World Happiness Report Score (from 2023 Report)
 
@@ -196,10 +134,15 @@ happiness <- read.xlsx("DataForTable2.1.xlsx") |>
     !is.na(life_ladder)) |>
   group_by(country) |>
   slice_max(year, n=1)
+
 happiness
 ```
 
-This dataset was taken from [Home \| The World Happiness Report](https://worldhappiness.report/) (specifically used from [here](https://worldhappiness.report/ed/2023/#appendices-and-data)) and records the areas of 'happiness' in each country. The column closest to this measure is the `life_ladder` column; happiness in each country.
+This dataset was taken from [Home \| The World Happiness Report](https://worldhappiness.report/) [^4] (specifically used from [here](https://worldhappiness.report/ed/2023/#appendices-and-data) [^5]) and records the areas of 'happiness' in each country. The column closest to this measure is the `life_ladder` column; happiness in each country.
+
+[^4]: <https://worldhappiness.report/>
+
+[^5]: <https://worldhappiness.report/ed/2023/#appendices-and-data>
 
 In Part 1, cleaning up life_ladder was focused on. Tidying up this column had the following steps. `Janitor` used to clean up the names (turns uppercase into lower case and replacing spaces or such with underscores), renaming the country column (from `country_name`), filtering out the missing/incomplete values (`NA's`), and lastly only focusing on recent observations.
 
@@ -215,14 +158,14 @@ In Part 1, cleaning up life_ladder was focused on. Tidying up this column had th
 
 1.  We performed the combination of the data through the inner_join function
 2.  This function helps recognize which countries are mutual between the two datasets, and therefore we do not have any missing data per country due to merging
-3.  The only column that we modifed was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
+3.  The only column that we modified was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
 4.  The plot that we made thus combined information from both the covid dataset (continent data and total covid cases) and data from the happiness dataset (gdp per capita and corruption rates)
 5.  Through this, we can see how countries who overall generate less capital per person's population is affected by covid, and also if certain continents in the world's covid rates were higher
 
 **Aware_Covid_Happiness**
 
 1.  The aware_covid dataset was cleaned and combined in part 1 using multiple datasets but mainly covid_2020 and climate_awaress. It was combined by the country names present in both the date sets.
-2.  This combined dataset aware_covid consisting of column covid cases per capita calulated by dividing total cases per country by it's total population, which was further used in the analysis plot #3.
+2.  This combined data set aware_covid consisting of column covid cases per capita calulated by dividing total cases per country by it's total population, which was further used in the analysis plot #3.
 3.  The aware_covid dataset was combined with happiness dataset in this part by the column country using an 'inner_join' function.
 4.  The final result of the combination was the aware_covid_happiness dataset.
 
@@ -327,7 +270,7 @@ happiness_covid_plot <- happiness_covid_altered_filtered |>
 happiness_covid_plot
 ```
 
-This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
+This insight is supported by the summary statistics in table \@ref(tab:summary_stats).
 
 ```{r}
 summary_table <- happiness_covid_altered_filtered |>
@@ -357,58 +300,47 @@ summary_table |>
 Finally, \@ref(fig:insight3) shows the relationship between people's positive emotional experiences (positive affect column in happiness data) and the number of covid cases per capita (aware_covid data) across different continents. Plotting these two variables will allow us to see whether there is a clear trend that connects the number of cases of covid with higher or lower levels of positive affect. Because the data is displayed independently for every continent, we can see regional variations and determine whether geographic or cultural factors may have an impact on the connection between covid distribution and emotional well-being.
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
-aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")
-aware_covid_happiness
-aware_covid_happiness_plot <- aware_covid_happiness |>
+aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")|>
   ggplot() +
-    aes(x = positive_affect, y = covid_per_capita) +
-    geom_point(alpha = 0.6) +
-    geom_smooth(se = FALSE, method = "lm", formula = y ~ x)+
-   facet_wrap(~ continent) +
+    aes(x = positive_affect, y = covid_per_capita, colour = continent) +
+    geom_point() +
+    geom_smooth(se = FALSE, method = "lm", formula = y ~ x) +
     labs(
         x = "Positive Affect",
         y = "Total covid cases per capita",
-        title = "Covid Cases versus Positive Affect with No Awareness"
+        title = "Covid Cases versus Positive Affect",
+        colour = "Continent"
     )
 
-aware_covid_happiness_plot
+aware_covid_happiness
 ```
 
 This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
 
 ```{r}
-summary_stats_aware_covid_happiness <- aware_covid_happiness|>
-  select(continent, positive_affect, covid_per_capita) |>
-  group_by(continent)|>
-  summary() 
 
-summary_stats_aware_covid_happiness |> kable(
-  caption = "Summary Statistics of Positive Affect and Covid Cases per Capita by Continent"
-)
-
-summary_stats_aware_covid_happiness
 ```
 
 # Conclusion and Future Work
 
-Overall, we found \<<general ideas>\>.
+Overall, we found that the analysis of the three datasets on happiness, climate awareness, and COVID-19 provides meaningful insights into the interplay between economic status, climate awareness, and public health impacts across different regions.
 
-A second paragraph about our findings.
+In conclusion, higher climate awareness may contribute positively to life satisfaction in wealthier nations, while economic prosperity and low corruption seem to provide a buffer against pandemic challenges. Our research shows that corruption undermines public health systems and democratic institutions, damaging governments' ability to respond effectively to crises like COVID-19 [^6].Regional differences in emotional resilience during COVID-19 highlight the role of culture and geography in shaping public response to crises. This could also be explained in the fact that humans are very dependent on social interactions. [^7]
 
-The next steps in this analysis are...
+[^6]: <https://www.transparency.org/en/blog/corruption-and-climate-vulnerability-a-devastating-relationship>
 
-The limitations of this analysis are as follows. (Do not simply list potential issues with sampling, but relate them to your analysis and how they affect your conclusions. An honest and complete acknowledgement of the limitations makes the analysis more trustworthy.)
+[^7]: <https://cifar.ca/cifarnews/2021/03/17/how-has-covid-19-affected-world-happiness/>
+
+The next steps in this analysis would include further exploraon to see if the positive relationship between climate awareness and happiness also holds for countries with lower GDP per capita. This could help determine if the correlation is universal or influenced by economic factors. As well as, examining factors like healthcare access, government spending on health, and vaccination rates to see how these might impact COVID-19 outcomes in high-GDP countries. Finally, adding data on governance quality could provide a more nuanced view of how economic output and low corruption interplay in different regions.
+
+This analysis has some limitations that affect how broadly we can apply the findings. Since we use country-level data, we may miss important differences within large or diverse countries, and because the analysis is based on correlations, we can’t say for sure that one factor directly causes another (like climate awareness leading to higher happiness). By focusing on data from 2020, we capture only the early impacts of the pandemic, which may not show the full, long-term effects. Cultural differences in reporting happiness and emotional responses could mean our results don’t apply equally to all regions. Additionally, the absence of health and economic factors, and the use of self-reported happiness data, introduce some subjectivity into the results. While the analysis provides useful insights, these limitations mean that conclusions should be interpreted carefully.
 
 # References
 
-I am not strict about MLA or APA style or anything like that. For this report, I would much rather have your citations be easy to match to your insights.
-
-The easiest way is to use Rmd's [footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting) syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is:[^1], where I suggest that you put in something like this[^2] to make references for this assignment.
-
-[^1]: See the source view to see this footnote
-
-[^2]: The relevance to the insight is ... . From \<<name of source and name of article>\>, published on \<<date>\>, url: \<<link to page>\>
-
-Alternatively, you could make a list of citations with their main arguments and why they're relevent to your insights, methods, etc.
-
-The link above also references "bibtex" files. These are also extremely convenient, but have a steep learning curve and they make it difficult to tie them to an insight. If you use bibtext, then make sure that you provide a sentence to describe the source and it's relevance when you cite it - don't just add citations to the end of a sentence (this is common practice in academia, but I want to know that your citations are directly relevant for this assignmnet).
+1.  <https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx>
+2.  <https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey>
+3.  <https://covid.ourworldindata.org/data/owid-covid-data.csv>
+4.  <https://worldhappiness.report/>
+5.  <https://worldhappiness.report/ed/2023/#appendices-and-data>
+6.  <https://www.transparency.org/en/blog/corruption-and-climate-vulnerability-a-devastating-relationship>
+7.  <https://cifar.ca/cifarnews/2021/03/17/how-has-covid-19-affected-world-happiness/>
