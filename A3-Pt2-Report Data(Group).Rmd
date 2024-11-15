@@ -272,7 +272,12 @@ The next insight that we found is shown in \@ref(fig:insight2).
 # Feel free to change this, and to apply different sizes
 # to the other figures you create.
 
-The first thing we found interesting is we found how peoples happiness changed before and after Covid-19 another thing we found intruiging is how countries GPT per capita affects how many covid cases there are. We can extract how a nation's corruption level affects its GDP per capita and hence its covid cases (provided they are related). 
+The next insight that we found is we found how peoples happiness changed before and after Covid-19 another thing we found intruiging is how countries GPT per capita affects how many covid cases there are. We can extract how a nation's corruption level affects its GDP per capita and hence its covid cases (provided they are related). 
+We explored many aspects of the data, but will demonstrate three. These are that gdp per capita increases covid cases tend to increase as well, European countries tend to generate the most capital while simultanouesly being the least corrupt and that covid affected Asia and Europe the most. 
+
+1. GDP per capita focuses on the proportion of economic output per person. GDP acts as a measure of economic propersity of a country and therefore an increase in population over time. This increase of population leads to a larger spread of covid and hence more people contracting the virus. So, as the x varible of GDP per capita increases, the y axis increases too, signifying a positive correlation coefficient.
+2. We hypothesize that European's strong economic output likely stems from the aparrent lack of corruptions. This is because corrupt societies can have major economic problems (i.e not paying citizens proper wages and overly high taxation rates). The lack of corruption thus motivates citizens to work harder, and in turn an increase in economic output. By this logic, if we plotted each countries corruption level (y) vs GDP per capita (x) on a single graph, we would see tha tthe european countries would be far right on the x axis and lower on the y axis than the other continent.
+3. Covid-19 appeared to affect Asian and European countries the greatest. This is likely due to the high populations of European and Asian countries relative to the other countries. This then increases the overall spread of the disease throughout the population and increases the amount of Covid cases.
 
 
 happiness_covid <- covid_2020 |>
