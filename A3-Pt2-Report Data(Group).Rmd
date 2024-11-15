@@ -223,9 +223,11 @@ happiness_covid_plot
 Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
 
 1. We performed the combination of the data through the inner_join function
-2. This helps recognize which countries are mutual between the two datasets, and therefore we do not have any missing data per country due to merging
+2. This function helps recognize which countries are mutual between the two datasets, and therefore we do not have any missing data per country due to merging
 3. The only column that we modifed was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
-4. The plot that we made thus combined 
+4. The plot that we made thus combined information from both the covid dataset (continent data and total covid cases) and data from the happiness dataset (gdp per capita and corruption rates)
+5. Through this, we can see how countries who overall generate less capital per person's population is affected by covid, and also if certain continents in the world's covid rates were higher
+6. Additionally, 
 
 # Exploratory Data Analysis
 
