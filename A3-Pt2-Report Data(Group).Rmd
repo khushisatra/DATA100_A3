@@ -17,10 +17,6 @@ List your group members, including their student numbers, here:
 
 -   Khushi Satra, (203383100)
 
-You **must** be in a group in MyLS in order to see the DropBox used for submission. Even if you're alone, you must join a group by yourself.
-
-You **must** be in a group with people from the same section as you. MyLS does not allow for groups including students from both Data100A and Data100B.
-
 ```{r setup, include=FALSE}
 # echo = FALSE will set the Rmd to *not* show the R code. Don't change this.
 # You may change the default figure width and figure height as you please.
@@ -34,26 +30,19 @@ library(arrow)
 
 # Instructions
 
-You are encouraged to remove this instruction section prior to submission.
-
-It is recommended that you follow the structure of this template. The text is all placeholder - you are free to change any/all wording as you please, but it is very helpful for the grading process if you keep the same structure. Anything in \<<double angle brackets>\> definitely needs to be changed, but you are free to change any/all sentences!
-
-Note that all of the code is *hidden* by default. This file will be graded based on the insights, not the code.
-
 You will only submit the PDF version of this document. To knit to PDF, you'll need to run `install.packages("tinytex")` in the console, followed by `tinytex::install_tinytex()` (DO NOT PUT THESE COMMANDS IN AN RMD FILE!!!). If you encounter errors in "Knit to PDF", you can "knit to html" and then print the html file to PDF using your operating system's PDF view (e.g. Adobe Acrobat). Only standalone PDF files will be accepted by MyLS.
 
 # Abstract
 
--   If sea ice decline, hurricanes are more common, and social stability gets negative impact.
--   This analysis combines of three data sets(sea ice data, happiness data and cyclone's data) to explore different connections between each data set like examining the well-being, environmental conditions and cyclone occurrences. Firstly, the happiness data set shows the social-economic and well-being across different countries. The sea ice data talks about the ice extent in different regions over time. And lastly, the cyclones data consists of the cyclone identifiers across the world with date and time stamps. The purpose of this analysis is to discover the relationship between happiness, climate change and cyclones patterns. We used general techniques to Our team thinks that "If sea ice decline, hurricanes are more common, and social stability gets negative impact. " further we'll see if our thoughts are right.
+The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three disitnct data sets might have a relationship, and we do so by using R code.
 
-General context, very brief data descriptions, techniques used, and general conclusions, all contained within a single, concise paragraph.
+This report aims to explore the correlation of.... (1), (2), (3)..
 
 # Introduction
 
-Climate change is something that has been studied. Here's some relevant information about the context of our study.
+In 2020, global events such as the COVID-19 pandemic reshaped societal priorities, affecting public health, economic stability, and general well-being worldwide. This study explores the interrelations between national happiness levels, public awareness of climate change, and COVID-19 case data to understand broader implications on public sentiment and awareness, crossing over from the Covid 2020 data set, and Climate Awareness, and Happiness.
 
-If needed, this paragraph is more information about the context.
+We imported and tidied the datasets using techniques to ensure they combined seamlessly. The `dplyr` package was used for data manipulation (e.g., `filter()`, `mutate()`, `group_by()`), and `pivot_longer()`/`pivot_wider()` for reshaping. We standardized column names with `janitor::clean_names()` and handled missing values with `na.rm = TRUE`. Finally, the cleaned data was exported using `write_parquet().`
 
 In this report, we are going to explore some aspects climate change and the impact and/or perceptions of it by using exploratory techniques. We'll explore \<<general description of data>\> using \<<general description of techniques>\>.
 
@@ -61,7 +50,7 @@ By the end of this report, we will have shown ...
 
 # Data Description
 
-## \<\<Climate Awareness\>\>
+## 1. Climate Awareness
 
 ```{r load_data1}
 # Put in your code to load in the data set, along with any
@@ -109,20 +98,17 @@ climate_awareness <- climate_opinion_address |>
 write_parquet(climate_awareness, "climate_awareness.parquet")
 
 climate_awareness
+
+#Extra tidying 
 ```
 
-The data come from [a climate awareness survey](https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx)***(Add footnote here for references)*** and describes countries awreness of climate change, grouping them into people who are knowledgeable about climate change to people who's never heard of it. This survey helps analysts
+The data come from [a climate awareness surve](https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx)y ***(Add footnote here for references)*** and describes countries awareness of climate change, grouping them into people who are knowledgeable about climate change to people who's never heard of it. It comes from an Excel document with other related climate topics, brought from the [2020 survey](https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey).
 
-After loading in the data from the Excel sheet, the following steps are done in order to clean the data:
+After loading in the data from the Excel sheet, we separated the country and score column and simplified the survey answers to clearer headings.
 
-1.  Pivoting- Pivoting was used to reshape the data from a wide format (with each survey response category in separate columns) to a long format that is easier to analyze.
-2.  Renaming the survey options to shorter and more clear description.- Renaming the survey options to shorter codes simplifies the data for future processing and analysis. Using "aware_no" instead of lengthy descriptions such as "I have never heard of it" makes the code more concise and readable. 
-3.  Mutating Values- Specific survey response options were converted into shorter, standardized codes (e.g., "I know a lot about it" to "aware_alot") for easier analysis.
-4. Renaming Columns- The climate_awareness column was renamed to ensure clarity and consistency in column naming.
-5. Pivoting wider- Restructured the data so that survey response categories are column names (e.g., aware_no, aware_alittle) and their respective scores are values, making it easier to analyze each country's awareness level.
-6. Writing to Parquet-  I saved the cleaned data as a.parquet file to optimize storage and allow for faster data loading in future analyses.
+After loading in the data from the Excel sheet, pivoting was used to reshape the data from a wide format (with each survey response category in separate columns) to a long format that is easier to analyze the score of countries. Then, we renamed the survey options to shorter codes simplifies the data for future processing and analysis. Using "aware_no" instead of lengthy descriptions such as "I have never heard of it" makes the code more concise and readable. The climate_awareness column was renamed as well to ensure clarity and consistency in column naming. Next, we restructured the data so that survey response categories are column names (e.g., aware_no, aware_alittle) and their respective scores are values, making it easier to analyze each country's awareness level. Finally, the cleaned data was saved as a a.parquet file.
 
-## \<\<Sea Ice Data\>\>
+## 2. COVID-19 2020 
 
 ```{r load_data2}
 # Put in your code to load in the data set, along with any
@@ -138,144 +124,41 @@ theme_set(theme_bw())
 library(arrow)
 library(openxlsx)
 
-# Loading the data
-sea_ice_extent_xlsx <- "https://masie_web.apps.nsidc.org/pub//DATASETS/NOAA/G02135/seaice_analysis/Sea_Ice_Index_Daily_Extent_G02135_v3.0.xlsx"
-
-
-NH_daily <- sea_ice_extent_xlsx |>
-    read.xlsx(
-        sheet = "NH-Daily-Extent",
-    ) |>
-    select(X1, X2, `1978`:`2023`) |>
-    rename(
-        month = X1,
-        day = X2
-    ) |>
-    fill(month) |>
-    pivot_longer(
-        cols = `1978`:`2023`,
-        names_to = "year",
-        values_to = "ice_extent",
-        values_drop_na = TRUE,
-    ) |>
-    mutate(
-        year = as.integer(year),
-        month = ordered(
-            month,
-            levels = c("January", "February", "March", "April",
-                "May", "June", "July", "August", "September",
-                "October", "November", "December")),
-        region = "Arctic",
-    ) |>
-    arrange(
-        year, month, day
-    )
-
-NH_daily 
-
-
-SH_daily <- sea_ice_extent_xlsx |>
-    read.xlsx(
-        sheet = "SH-Daily-Extent",
-        skipEmptyCols = TRUE,
-        fillMergedCells = TRUE,
-        cols = 1:48
-    ) |>
-    rename(
-        month = X1,
-        day = X2
-    ) |>
-    pivot_longer(
-        cols = `1978`:`2023`,
-        names_to = "year",
-        names_transform = list(year = as.integer),
-        values_to = "ice_extent",
-        values_drop_na = TRUE,
-    ) |>
-    mutate(
-        month = ordered(
-            month,
-            levels = c("January", "February", "March", "April",
-                "May", "June", "July", "August", "September",
-                "October", "November", "December")
+owid_address <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
+covid_cases <- owid_address |>
+    read_csv(
+        col_types = cols(
+            .default = col_double(),
+            date = col_date(format = ""),
+            iso_code = col_character(),
+            location = col_character(),
+            continent = col_character(),
+            tests_units = col_character()
         ),
-        region = "Antarctic",
-    ) |>
-    arrange(
-        year, month, day
+        progress = FALSE,
+        show_col_types = FALSE
     )
 
-SH_daily
+covid_cases
 
-ice_extent_daily <- bind_rows(NH_daily, SH_daily) |>
-    mutate(date = make_date(year, month, day)) |>
-    arrange(region, date)
-
-ice_extent_daily
-
-
-ice_extent_daily |>
-    ggplot() +
-        aes(x = yday(date), y = ice_extent, colour = year, group = factor(year)) +
-        geom_line() +
-        facet_wrap(~region) +
-        #coord_polar() +
-        scale_colour_distiller(
-            direction = 1, type = "seq", palette = 3
-        )
-
-
-ice_extent_yearly <- ice_extent_daily |>
-  group_by(year, region) |>
-  summarise(
-  min = min(ice_extent),
-  max = max(ice_extent)
-  ) |> 
-  pivot_longer(
-    cols = c(min, max), 
-    names_to = "name", 
-    values_to = "value"
-    )
+covid_2020 <- covid_cases|>
+  filter(year(date) == 2020 )|>
+  group_by(country = location, continent) |>
+  summarise(total_cases = sum(total_cases, na.rm = TRUE),
+            .groups = "drop")|>
+  select(country, continent, total_cases)
   
-ice_extent_yearly
 
-ggplot(ice_extent_yearly) +
-    aes(x = year, y = value, colour = name) +
-    geom_line() +
-    facet_wrap(~ region) +
-    labs(
-        x = "Year", y = "Sea Ice Extent",
-        colour = "Stat",
-        title = "Min and Max Sea Ice Extent, by Year",
-        subtitle = "Arctic is clearly decreasing, Antarctic is possibly becoming more variable."
-    )
+covid_2020
 
-write_parquet(ice_extent_yearly, "ice_extent_yeary.parquet")
-
+write_parquet(covid_2020, "covid_2020.parquet")
 ```
 
-The data set come from [Sea Ice - NOAA Arctic](https://arctic.noaa.gov/report-card/report-card-2023/sea-ice-2023/) ***(Add footnote here for references)***, and details specific Arctic regions and their sea ice extent, that is, the total area covered in ice of at least 15% concentration. It includes the date in which the value was calculated, including its month, day and year. Sea ice extent is used to analyze many things, but in this report we will mainly focus on its impact on climate change.
+Collected from [here](https://covid.ourworldindata.org/data/owid-covid-data.csv), this data set showcases the cases in each country (as well as its continent), reported in 2020. It contains a wide range of information as well (like life expectancy, total_deaths, etc.)
 
-Within the `sea_ice_extent_xlsx` variable, the file contains data on daily sea ice extent data for both the Northern Hemisphere (NH) and Southern Hemisphere (SH), stored in separate sheets (`NH-Daily-Extent` and `SH-Daily-Extent`). This means that they needed to both be cleaned up individually, and then joined together for future and more thought-provoking analysis. The following process describes why and how tidying up looked like:
+When we tidied up the data, we focused specifically on covid cases. Firstly, after loading out the data, we defined the columns with various functions, to ensure correct data types for example. Then we filtered by year as every collection was from the same year but different periods of 2020, which just made the data more cleaner. Next, we grouped location and continent to connect the pairs, summarized total cases to sum up the cases, and removed NA to ensure correct values. After that, we selected country, continent, and total_cases as those were our main columns we wanted to focus on.
 
-1.  Cleaning the Northern Hemisphere Data (`NH-Daily-Extent)`
-    -   Only the relevant columns are selected: `X1` (month), `X2` (day), and columns from 1978 to 2023 (years of sea ice extent data). The `X1` and `X2` columns are renamed to `month` and `day` for clarity.
-    -   The `fill()` function fills down missing month values to complete the data where the month is blank for some rows (meaning each row is surely specified of the month, a bit different from the excel sheet).
-    -   The data is pivoted from a wide format (with separate columns for each year) to a long format with `year` and `ice_extent` columns. This format is better suited for time-series analysis.
-    -   Furthermore, `year` is converted to an integer for easier numerical operations, `month` is converted to an ordered factor to ensure correct chronological order, and the `region` column is added with the value `"Arctic"` for identification. Then these are arranged, mainly for an easier sequence to look at.
-2.  Cleaning the Southern Hemisphere Data (`SH_daily`)
-    -   The data is read similarly to the Northern one (using `read.xlsx)`but with additional parameters to handle empty columns and merged cells, setting `cols = 1:48` to specify the necessary range.
-    -   Again, like the NH data, columns are renamed, pivoted longer is used to format specific columns, and mutated of certain columns for better variable types. It is also arranged correspondingly.
-3.  Joining the Hemispheres
-    -   Using `bind_rows`, the data sets are combined to create `ice_extent_daily.` While doing so, a new column is created, `date`, that is generate dby combining the month, date, and year into a single variable - making the data more concise.
-    -   Then the data is then sorted by `region` and `date` for easier plotting and analysis.
-4.  Plotting
-    -   To summarize annual trends, we can calculate yearly minimum and maximum ice extents to make an insightful plot. To do so, we group `year` and `region`, to then calculate the statistics and pivot it under new names with its corresponding value.
-    -   Finally, the annual minimum and maximum extents are plotted: **x-axis**: Year, **y-axis**: Sea ice extent (min and max), **folor**: Differentiates between min and max values, **faceting**: Split by region, allowing analysis of trends across regions. Finally, we save the data.
-        -   This plot lets us know that: "Arctic is clearly decreasing, Antarctic is possibly becoming more variable."
-5.  In summary, this analysis indicates that while the Arctic is experiencing a consistent decline in sea ice, the Antarctic's sea ice is less predictable and might be influenced by different climatic factors. This contrast is important for understanding regional differences in how climate change impacts the polar regions.
-
-## \<\<World Happiness Report Score (from 2023 Report)\>\>
+## 3. World Happiness Report Score (from 2023 Report)
 
 ```{r load_data2}
 # Put in your code to load in the data set, along with any
@@ -288,35 +171,28 @@ happiness <- read.xlsx("DataForTable2.1.xlsx") |>
     ) |>
   filter(
     !is.na(life_ladder)
-  ) |>
+  ) |
   group_by(country) |>
-  slice_max(year, n=1) |>
-  ggplot(aes(x = social_support,y = freedom_to_make_life_choices))+
-  geom_point(aes(color = life_ladder),alpha = 0.6)+
-  geom_smooth(method = "lm", se=FALSE)+
-  labs(title = "Social Support vs. Freedom and Its Impact on Happiness",
-       x = "Social Support",
-       y = "Freedom to Make Life Choices",
-       color = "Life Ladder") +
-  theme_minimal()
-  
+  slice_max(year, n=1)
 
 happiness
 ```
 
-The data come from [Home \| The World Happiness Report](https://worldhappiness.report/) (specifcally used from [here](https://worldhappiness.report/ed/2023/#appendices-and-data)) and records the areas of 'happiness' in each country. The column closest to this measure is the `life_ladder` column;happiness in each country.
+This dataset was taken from [Home \| The World Happiness Report](https://worldhappiness.report/) (specifically used from [here](https://worldhappiness.report/ed/2023/#appendices-and-data)) and records the areas of 'happiness' in each country. The column closest to this measure is the `life_ladder` column; happiness in each country.
 
-In Part 1, cleaning up life_ladder was focused on. Tidying up this column had the following steps.
-
-`Janitor` used to clean up the names, renaming the country column (from `country_name`), filtering out the missing/incomplete values (`NA's`), and only focusing on recent observations and values.
+In Part 1, cleaning up life_ladder was focused on. Tidying up this column had the following steps. `Janitor` used to clean up the names (turns uppercase into lower case and replacing spaces or such with underscores), renaming the country column (from `country_name`), filtering out the missing/incomplete values (`NA's`), and lastly only focusing on recent observations.
 
 ## Combining the Data
 
 Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
 
+1.  dwdw
+2.  wdw
+3.  
+
 # Exploratory Data Analysis
 
-To achieve our goals, we explored the data by...
+To achieve our goals, we explored the data by visualization specific information into plots, and recognizing its patterns.
 
 We explored many aspects of the data, but will demonstrate three. These are \<\<insight 1\>\>, \<\<insight 2\>\>, and \<<insight3>\>
 
@@ -345,6 +221,8 @@ The next insight that we found is shown in \@ref(fig:insight2).
 # This figure will have a height of 4 and a width of 6.
 # Feel free to change this, and to apply different sizes
 # to the other figures you create.
+
+
 ```
 
 Finally, \@ref(fig:insight3) shows ...
