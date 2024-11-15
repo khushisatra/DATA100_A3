@@ -7,7 +7,7 @@ output:
     df_print: paged
 ---
 
-Report contributors:
+List your group members, including their student numbers, here:
 
 -   Noya Barak (169097527)
 
@@ -29,21 +29,25 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, fig.width = 6)
 library(tidyverse)
 library(arrow)
 library(knitr)
+library(wbstats)
+library(openxlsx)
 ```
-
-# Instructions
-
-You will only submit the PDF version of this document. To knit to PDF, you'll need to run `install.packages("tinytex")` in the console, followed by `tinytex::install_tinytex()` (DO NOT PUT THESE COMMANDS IN AN RMD FILE!!!). If you encounter errors in "Knit to PDF", you can "knit to html" and then print the html file to PDF using your operating system's PDF view (e.g. Adobe Acrobat). Only standalone PDF files will be accepted by MyLS.
 
 # Abstract
 
-The analysis presented is a continuation of our exploration of Disparate Data: Part 1. We explore how three distinct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data.
+The analysis presented is a continuation of our exploration of Part 1. We explore how three distinct data sets(aware covid data, happiness data and climate awareness data) to explore different connections between each data set like examining the well-being, environmental awareness covid awareness. Firstly, the happiness data set shows the social-economic and well-being across different countries. The aware covid data talks about the awareness of covid. And lastly, the climate awareness data consists of the awareness in people across the world regarding the climate changes. The purpose of this analysis is to discover the relationship between happiness, awareness of climate change and covid data. Some general conclusions were:
+
+1\. The top 5 country with higher gdp doesn't have a linear relationship with life ladder, and show basic awareness for climate changes.
+
+2\. Higher corruption level seen in all continents, however there is more covid cases in areas with higher gdp.
+
+3. Surprisingly, there is no linear relationship between increasing covid cases per capita and positive affect. All the continents except North America, display a decrease in positive emotions with the increase in covid cases.
 
 # Introduction
 
 In 2020, global events such as the COVID-19 pandemic reshaped societal priorities, affecting public health, economic stability, and general well-being worldwide. This study explores the interrelations between national happiness levels, public awareness of climate change, and COVID-19 case data to understand broader implications on public sentiment and awareness, crossing over from the Covid 2020 data set, and Climate Awareness, and Happiness.
 
-We imported and tidied the data sets using techniques to ensure they combined seamlessly. The `dplyr` package was used for data manipulation (e.g., `filter()`, `mutate()`, `group_by()`), and `pivot_longer()`/`pivot_wider()` for reshaping. We standardized column names with `janitor::clean_names()` and handled missing values with `na.rm = TRUE`. Finally, the cleaned data was exported using `write_parquet().`
+We imported and tidied the datasets using techniques to ensure they combined seamlessly. The `dplyr` package was used for data manipulation (e.g., `filter()`, `mutate()`, `group_by()`), and `pivot_longer()`/`pivot_wider()` for reshaping. We standardized column names with `janitor::clean_names()` and handled missing values with `na.rm = TRUE`. Finally, the cleaned data was exported using `write_parquet().`
 
 In this report, we are going to explore some aspects climate change and the impact and/or perceptions of it by using exploratory techniques.
 
@@ -123,6 +127,71 @@ Collected from [here](https://covid.ourworldindata.org/data/owid-covid-data.csv)
 
 When we tidied up the data, we focused specifically on Covid cases. Firstly, after loading out the data, we defined the columns with various functions, to ensure correct data types for example. Then we filtered by year as every collection was from the same year but different periods of 2020, which just made the data more cleaner. Next, we grouped location and continent to connect the pairs, summarized total cases to sum up the cases, and removed NA to ensure correct values. After that, we selected country, continent, and total_cases as those were our main columns we wanted to focus on.
 
+```{r}
+pop_data <- wb_data("SP.POP.TOTL", start_date = 2020, end_date = 2020)
+
+pop_countries <- pop_data |> pull(country)
+aware_countries <- climate_awareness |> pull(country)
+
+aware_fixed_country <- climate_awareness |>
+    mutate(
+        # Replace *all* *literal* periods with a space in the country column
+        # YOUR CODE HERE
+        country = str_replace_all(aware_countries,"\\.", " ")
+    )
+pop_countries <- pop_data |> pull(country)
+aware_countries <- aware_fixed_country |> pull(country)
+
+aware_fixed_country_match <- aware_fixed_country |>
+  mutate(
+ country = case_when(
+        country == "Bolivia (Plurinational State of)" ~ "Bolivia",
+        country == "Congo (Democratic Republic of the)" ~ "Congo, Dem. Rep.",
+        country == "Egypt" ~ "Egypt, Arab Rep.",
+        country == "Hong Kong" ~ "Hong Kong SAR, China",
+        country == "Lao People's Democratic Republic" ~ "Lao PDR",
+        country == "Slovakia" ~ "Slovak Republic",
+        country == "North MAcedonia" ~ "North Macedonia",
+        country == "South Korea" ~ "Korea, Rep.",
+        country == "Turkey" ~ "Turkiye",
+        country == "Vietnam" ~ "Viet Nam",
+        country == "Yemen" ~ "Yemen, Rep.",
+        TRUE~country
+        )
+    )
+aware_countries <- aware_fixed_country_match |> pull(country)
+
+aware_pop <- 
+  inner_join(aware_fixed_country_match, pop_data, by = "country" )|>
+  rename( total_population = SP.POP.TOTL)|>
+select(country, total_population, aware_no, aware_alittle, aware_moderate, aware_alot, aware_refuse)
+  
+aware_countries <- aware_pop |> pull(country) |> unique()
+covid_countries <- covid_2020 |> pull(country) |> unique()
+
+covid_2020_match_country <- covid_2020|>
+mutate(
+    country = case_when(
+      country == "Congo"~ "Congo, Dem. Rep." ,
+      country == "Egypt" ~"Egypt, Arab Rep."  ,
+      country == "Hong Kong" ~"Hong Kong SAR, China" ,
+      country == "Laos" ~"Lao PDR"  ,
+      country == "Slovakia" ~"Slovak Republic" ,
+      country == "South Korea" ~"Korea, Rep." ,
+      country == "Turkey" ~"Turkiye"  ,
+      country == "Vietnam" ~"Viet Nam" ,
+      country == "Yemen" ~"Yemen, Rep." ,
+      TRUE~ country
+    )
+  )
+
+aware_covid <- covid_2020_match_country |>
+  #select(country, continent, total_cases) |>
+  inner_join(aware_pop, by = "country") |>
+  mutate(covid_per_capita = total_cases/total_population)
+aware_covid
+```
+
 ## 3. World Happiness Report Score (from 2023 Report)
 
 ```{r load_data3}
@@ -134,7 +203,6 @@ happiness <- read.xlsx("DataForTable2.1.xlsx") |>
     !is.na(life_ladder)) |>
   group_by(country) |>
   slice_max(year, n=1)
-
 happiness
 ```
 
@@ -158,14 +226,14 @@ In Part 1, cleaning up life_ladder was focused on. Tidying up this column had th
 
 1.  We performed the combination of the data through the inner_join function
 2.  This function helps recognize which countries are mutual between the two datasets, and therefore we do not have any missing data per country due to merging
-3.  The only column that we modified was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
+3.  The only column that we modifed was the year column, since it only provided covid statistics per individual year, rather than reporting a statistic of the net cases per country
 4.  The plot that we made thus combined information from both the covid dataset (continent data and total covid cases) and data from the happiness dataset (gdp per capita and corruption rates)
 5.  Through this, we can see how countries who overall generate less capital per person's population is affected by covid, and also if certain continents in the world's covid rates were higher
 
 **Aware_Covid_Happiness**
 
 1.  The aware_covid dataset was cleaned and combined in part 1 using multiple datasets but mainly covid_2020 and climate_awaress. It was combined by the country names present in both the date sets.
-2.  This combined data set aware_covid consisting of column covid cases per capita calulated by dividing total cases per country by it's total population, which was further used in the analysis plot #3.
+2.  This combined dataset aware_covid consisting of column covid cases per capita calulated by dividing total cases per country by it's total population, which was further used in the analysis plot #3.
 3.  The aware_covid dataset was combined with happiness dataset in this part by the column country using an 'inner_join' function.
 4.  The final result of the combination was the aware_covid_happiness dataset.
 
@@ -270,7 +338,7 @@ happiness_covid_plot <- happiness_covid_altered_filtered |>
 happiness_covid_plot
 ```
 
-This insight is supported by the summary statistics in table \@ref(tab:summary_stats).
+This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
 
 ```{r}
 summary_table <- happiness_covid_altered_filtered |>
@@ -281,18 +349,14 @@ summary_table <- happiness_covid_altered_filtered |>
     sd_total_cases = sd(total_covid_cases, na.rm = TRUE),
     mean_log_gdp = mean(log_gdp_per_capita, na.rm = TRUE),
     median_log_gdp = median(log_gdp_per_capita, na.rm = TRUE),
-    sd_log_gdp = sd(log_gdp_per_capita, na.rm = TRUE),
-    mean_happiness = mean(happiness_score, na.rm = TRUE),
-    median_happiness = median(happiness_score, na.rm = TRUE),
-    sd_happiness = sd(happiness_score, na.rm = TRUE)
+    sd_log_gdp = sd(log_gdp_per_capita, na.rm = TRUE)
   )
 summary_table |>
   kable(
     caption = "Summary Statistics by Corruption Level",
     col.names = c("Corruption Level", 
                   "Mean Total Cases", "Median Total Cases", "SD Total Cases", 
-                  "Mean Log GDP", "Median Log GDP", "SD Log GDP",
-                  "Mean Happiness", "Median Happiness", "SD Happiness")
+                  "Mean Log GDP", "Median Log GDP", "SD Log GDP")
   ) 
 
 ```
@@ -300,25 +364,36 @@ summary_table |>
 Finally, \@ref(fig:insight3) shows the relationship between people's positive emotional experiences (positive affect column in happiness data) and the number of covid cases per capita (aware_covid data) across different continents. Plotting these two variables will allow us to see whether there is a clear trend that connects the number of cases of covid with higher or lower levels of positive affect. Because the data is displayed independently for every continent, we can see regional variations and determine whether geographic or cultural factors may have an impact on the connection between covid distribution and emotional well-being.
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
-aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")|>
+aware_covid_happiness <- inner_join(happiness, aware_covid, by="country")
+aware_covid_happiness
+aware_covid_happiness_plot <- aware_covid_happiness |>
   ggplot() +
-    aes(x = positive_affect, y = covid_per_capita, colour = continent) +
-    geom_point() +
-    geom_smooth(se = FALSE, method = "lm", formula = y ~ x) +
+    aes(x = positive_affect, y = covid_per_capita) +
+    geom_point(alpha = 0.6) +
+    geom_smooth(se = FALSE, method = "lm", formula = y ~ x)+
+   facet_wrap(~ continent) +
     labs(
         x = "Positive Affect",
         y = "Total covid cases per capita",
-        title = "Covid Cases versus Positive Affect",
-        colour = "Continent"
+        title = "Covid Cases versus Positive Affect with No Awareness"
     )
 
-aware_covid_happiness
+aware_covid_happiness_plot
 ```
 
 This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
 
 ```{r}
+summary_stats_aware_covid_happiness <- aware_covid_happiness|>
+  select(continent, positive_affect, covid_per_capita) |>
+  group_by(continent)|>
+  summary() 
 
+summary_stats_aware_covid_happiness |> kable(
+  caption = "Summary Statistics of Positive Affect and Covid Cases per Capita by Continent"
+)
+
+summary_stats_aware_covid_happiness
 ```
 
 # Conclusion and Future Work
