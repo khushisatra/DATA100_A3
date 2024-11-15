@@ -307,7 +307,17 @@ aware_covid_happiness
 This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
 
 ```{r}
+summary_stats_aware_covid_happiness <- aware_covid_happiness|>
+  select(continent, positive_affect, covid_per_capita) |>
+  group_by(continent)|>
+  summary() 
 
+kable(
+  capture.output(summary_stats_aware_covid_happiness),
+  caption = "Summary Statistics of Positive Affect and Covid Cases per Capita by Continent"
+)
+
+summary_stats_aware_covid_happiness
 ```
 
 # Conclusion and Future Work
