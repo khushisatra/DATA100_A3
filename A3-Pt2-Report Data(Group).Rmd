@@ -229,6 +229,27 @@ Explain how any combinations of data were performed. Explain what kind of join w
 5. Through this, we can see how countries who overall generate less capital per person's population is affected by covid, and also if certain continents in the world's covid rates were higher
 6. Additionally, 
 
+summary_table <- happiness_covid_altered_filtered |>
+  group_by(corruption_base) |>
+  summarize(
+    mean_total_cases = mean(total_covid_cases, na.rm = TRUE),
+    median_total_cases = median(total_covid_cases, na.rm = TRUE),
+    sd_total_cases = sd(total_covid_cases, na.rm = TRUE),
+    mean_log_gdp = mean(log_gdp_per_capita, na.rm = TRUE),
+    median_log_gdp = median(log_gdp_per_capita, na.rm = TRUE),
+    sd_log_gdp = sd(log_gdp_per_capita, na.rm = TRUE),
+    mean_happiness = mean(happiness_score, na.rm = TRUE),
+    median_happiness = median(happiness_score, na.rm = TRUE),
+    sd_happiness = sd(happiness_score, na.rm = TRUE)
+  )
+summary_table |>
+  kable(
+    caption = "Summary Statistics by Corruption Level",
+    col.names = c("Corruption Level", 
+                  "Mean Total Cases", "Median Total Cases", "SD Total Cases", 
+                  "Mean Log GDP", "Median Log GDP", "SD Log GDP",
+                  "Mean Happiness", "Median Happiness", "SD Happiness")
+  ) 
 # Exploratory Data Analysis
 
 To achieve our goals, we explored the data by visualization specific information into plots, and recognizing its patterns.
